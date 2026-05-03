@@ -5,7 +5,7 @@
 ---
 ## 內容條目
 
-Nvdia Aerial Ran learning ---  (未來貼上連結)  
+Nvdia Aerial CUDA-Accelerated RAN learning ---  (未來貼上連結)  
 DGX Spark System Setup ---  (未來貼上連結)  
 OAI + RU 整合 ---  (未來貼上連結)
 
