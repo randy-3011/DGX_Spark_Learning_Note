@@ -2,7 +2,7 @@
 
 ## What is Aerial CUDA-Accelerated RAN ?
 
-NVIDIA Aerial CUDA-Accelerated RAN is a software platform (SDK) for building 5G / 6G radio access
+NVIDIA Aerial CUDA-Accelerated RAN is a software platform (SDK) for building 5G / 6G radio access  
 networks (RAN) using GPU acceleration.  
 It uses CUDA on NVIDIA GPUs to process wireless base station workloads such as signal processing,  
 scheduling, and network functions.  
