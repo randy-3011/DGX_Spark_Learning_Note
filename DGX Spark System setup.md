@@ -1,4 +1,4 @@
-## Cable Connection  
+## 1. Cable Connection  
 ### (1).Host OS Internet Connection  
 1.CX7 QSFP ports for fronthaul and backhaul connections  
 2.RJ45 port for the host OS internet connection.  
@@ -7,15 +7,22 @@
 1.CX7 fronthaul port#0 or port#1 must be connected to the fronthaul switch.  
 2.Make sue the PTP is configured to use the port connected to the fronthaul switch.  
 
-## 2.Disable Secure Boot  
+## 2. Disable Secure Boot  
 1.Reboot and press Esc to enter the UEFI BIOS menu.  
 2.Use right arrow key to navigate to Security tab.  
 3.use down arrow key to navigate to Secure Boot menu and press Enter.  
+
+![說明](images/image_1.png)
+
 4.down arrow to select Disable and press Enter.  
+
+![說明](images/image_2.png)
+
 5.Press F4 to save and exit.  
 
-## 3.DGX Spark First-Time Setup  
+## 3. DGX Spark First-Time Setup  
 
+![說明](images/image_3.png)
 
 ### 1.GPU  
 code :  
@@ -41,7 +48,7 @@ Output:
 2 ConnectX-7, each one with two ports  
 2 NIC × 2 port = 4 Ethernet function  
 
-## 4.Configure the Network Interfaces (For the following steps)  
+## 4. Configure the Network Interfaces (For the following steps)  
 Purpose : Ensure that you have the proper netplan config for your local network.  
 The network interface names could change after reboot  
 --> Create a persistent net link files under /etc/systemd/network, one for each interface.  
@@ -49,6 +56,9 @@ Target : To ensure persistent network interface names after reboot
 
 ### (1). Run to check for network devices and look for the entries.  
 --> To find the MAC address of the CX7 NIC.  
+
+![說明](images/image_4.png)
+
 code :  
 $ sudo apt-get install jq -y  
 功能: 安裝 jq 工具  
@@ -59,9 +69,51 @@ $ sudo apt-get install jq -y
 
 code :  
 $ sudo lshw -json -C network  
-功能: 列出所有網卡資訊  
-(1) lshw : list hardware ， 列出電腦硬體資訊。  
-(2) -json : 輸出 JSON 格式，方便 jq 處理。  
-(3) -C network : 只列出 network 類別，Ethernet card, NIC, Mellanox 和 Wi-F. 
+功能: 取得所有網卡的詳細資料（用 JSON 格式）  
+| jq '.[] | "\(.product), MAC: \(.serial)"'  
+功能: 把 JSON 轉成人類看得懂的文字   
+| grep "ConnectX-7"  
+功能: 只留下 ConnectX-7
 
-### (2). Create files at /etc/systemd/network/ with the desired name for the interface and the MAC address found in the previous step.
+(1) lshw : list hardware ， 列出電腦硬體資訊。    
+(2) -json : 輸出 JSON 格式，方便 jq 處理。  
+(3) -C network : 只列出 network 類別，Ethernet card, NIC, Mellanox 和 Wi-F.  
+(4) .[] : 把 JSON 裡「每一個網卡」拿出來  
+(5) \(.product) : 取出「網卡型號」  
+    \(.serial) : 取出「MAC 位址」 
+
+Output:  
+所有 ConnectX-7 網卡 + 每個 port 的 MAC
+
+### (2). Create files at /etc/systemd/network/ with the desired name for the interface and the MAC address found in the previous step.  
+功能: 把每張 Mellanox 網卡（用 MAC 位址辨識）固定重新命名成 aerial100~103  
+
+![說明](images/image_5.png)
+
+code:  
+(1):  
+sudo nano /etc/systemd/network/20-aerial100.link  
+作用: 用 nano 編輯一個 link 規則檔  
+(2):   
+[Match]  
+MACAddress=4c:bb:47:ww:ww:ww  
+作用: 找到 MAC 是這個的網卡  
+(3):  
+[Link]  
+Name=aerial100  
+作用: 把這張卡改名叫 aerial100  
+
+NOTE:  
+後面的文件都會假設：
+(1):aerial00、aerial01 是拿來接 RU / fronthaul  
+(2):而且 aerial00 專門拿來做 PTP（時間同步）  
+
+### (3). Apply the change
+
+
+
+code:  
+$ sudo netplan apply  
+功能: 套用（啟用）你目前設定的網路配置。  
+(1): netplan : Ubuntu 的網路管理工具，用來設定 IP 位址 、 DHCP / static IP 、 gateway 、 DNS 、 網卡設定。  
+(2): apply : 套用設定，把設定檔 → 變成實際網路狀態。  
