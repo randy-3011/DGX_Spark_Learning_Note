@@ -9,6 +9,7 @@
 
 ![說明](images/image_0.png)
 
+---
 ## 2. Disable Secure Boot  
 1.Reboot and press Esc to enter the UEFI BIOS menu.  
 2.Use right arrow key to navigate to Security tab.  
@@ -22,6 +23,7 @@
 
 5.Press F4 to save and exit.  
 
+---
 ## 3. DGX Spark First-Time Setup  
 
 ![說明](images/image_3.png)
@@ -50,6 +52,7 @@ Output:
 2 ConnectX-7, each one with two ports  
 2 NIC × 2 port = 4 Ethernet function  
 
+---
 ## 4. Configure the Network Interfaces (For the following steps)  
 Purpose : Ensure that you have the proper netplan config for your local network.  
 The network interface names could change after reboot  
@@ -119,3 +122,36 @@ $ sudo netplan apply
 功能: 套用（啟用）你目前設定的網路配置。  
 (1): netplan : Ubuntu 的網路管理工具，用來設定 IP 位址 、 DHCP / static IP 、 gateway 、 DNS 、 網卡設定。  
 (2): apply : 套用設定，把設定檔 → 變成實際網路狀態。  
+
+---
+## 5. Disable Auto Upgrade  
+
+1. Purpose : prevents the installed version of the low latency kernel from being accidentally changed with a subsequent software upgrade.  
+--> Edit the system file, and change the “1” to “0” for both lines.
+
+
+
+code:  
+$ sudo nano /etc/apt/apt.conf.d/20auto-upgrades  
+
+APT::Periodic::Update-Package-Lists "0";  
+作用: 不自動更新「套件列表」，" 1 " 是要 ， " 0 " 是不要  
+APT::Periodic::Unattended-Upgrade "0";  
+作用: 不要自動安裝更新，" 1 " 是半自動 ， " 0 " 是完全不自動
+
+(1): nano : 開啟文字編輯器  
+(2): /etc/apt/apt.conf.d/20auto-upgrades : Ubuntu 自動更新設定檔  
+
+
+2. Disable the fwupd-refresh timer   
+--> Prevent fwupdmgr from automatically checking for any updates  
+
+
+
+code:  
+$ sudo systemctl mask fwupd-refresh.timer  
+功能: 關閉 firmware 自動更新
+
+(1): systemctl : 控制 systemd 服務  
+(2): mask : 完全封鎖服務（最強關閉)  
+(3): fwupd-refresh.timer : 定期檢查 firmware 更新  
