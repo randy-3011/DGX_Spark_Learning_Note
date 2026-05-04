@@ -129,7 +129,7 @@ $ sudo netplan apply
 1. Purpose : prevents the installed version of the low latency kernel from being accidentally changed with a subsequent software upgrade.  
 --> Edit the system file, and change the “1” to “0” for both lines.
 
-
+![說明](images/image_7.png)
 
 code:  
 $ sudo nano /etc/apt/apt.conf.d/20auto-upgrades  
@@ -146,7 +146,7 @@ APT::Periodic::Unattended-Upgrade "0";
 2. Disable the fwupd-refresh timer   
 --> Prevent fwupdmgr from automatically checking for any updates  
 
-
+![說明](images/image_8.png)
 
 code:  
 $ sudo systemctl mask fwupd-refresh.timer  
