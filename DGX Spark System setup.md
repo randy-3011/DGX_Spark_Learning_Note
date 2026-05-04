@@ -7,6 +7,8 @@
 1.CX7 fronthaul port#0 or port#1 must be connected to the fronthaul switch.  
 2.Make sue the PTP is configured to use the port connected to the fronthaul switch.  
 
+![說明](images/image_0.png)
+
 ## 2. Disable Secure Boot  
 1.Reboot and press Esc to enter the UEFI BIOS menu.  
 2.Use right arrow key to navigate to Security tab.  
@@ -110,7 +112,7 @@ NOTE:
 
 ### (3). Apply the change
 
-
+![說明](images/image_6.png)
 
 code:  
 $ sudo netplan apply  
