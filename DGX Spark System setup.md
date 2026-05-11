@@ -1,3 +1,23 @@
+## Table of Contents:  
+### 1.Cable Connection  
+(1):Host OS Internet Connection  
+(2):E2E Test Connection  
+### 2.Disable Secure Boot  
+### 3.DGX Spark First-Time Setup  
+### 4.Configure the Network Interfaces  
+### 5.Disable Auto Upgrade  
+### 6.Install NVIDIA Optimized Ubuntu Kernel  
+### 7.Configure Linux Kernel Command-line  
+### 8.Apply the Changes and Reboot to Load the Kernel  
+### 9.Install Dependency Packages  
+### 10.Install DOCA OFED and Mellanox Firmware Tools on the Host  
+### 11.Install CUDA Driver  
+### 12.Install Docker and Nvidia Container Toolkit  
+### 13.Install ptp4l and phc2sys  
+### 14.Setup the Boot Configuration Service  
+### 15.Validating software-component versions and system configurations  
+
+---
 ## 1. Cable Connection  
 ### (1). Host OS Internet Connection  
 1. CX7 QSFP ports for fronthaul and backhaul connections.  
