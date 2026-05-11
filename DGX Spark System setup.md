@@ -1,56 +1,65 @@
 ## 1. Cable Connection  
-### (1).Host OS Internet Connection  
-1.CX7 QSFP ports for fronthaul and backhaul connections  
-2.RJ45 port for the host OS internet connection.  
+### (1). Host OS Internet Connection  
+1. CX7 QSFP ports for fronthaul and backhaul connections.  
+2. RJ45 port for the host OS internet connection.  
 
 ### (2). E2E(End to End) Test Connection  
-1.CX7 fronthaul port#0 or port#1 must be connected to the fronthaul switch.  
-2.Make sue the PTP is configured to use the port connected to the fronthaul switch.  
+1. CX7 fronthaul port#0 or port#1 must be connected to the fronthaul switch.  
+2. Make sue the PTP is configured to use the port connected to the fronthaul switch.  
 
 ![說明](images/image_0.png)
 
 ---
 ## 2. Disable Secure Boot  
-1.Reboot and press Esc to enter the UEFI BIOS menu.  
-2.Use right arrow key to navigate to Security tab.  
-3.use down arrow key to navigate to Secure Boot menu and press Enter.  
+1. Reboot and press Esc to enter the UEFI BIOS menu.  
+2. Use right arrow key to navigate to Security tab.  
+3. Use down arrow key to navigate to Secure Boot menu and press Enter.  
 
 ![說明](images/image_1.png)
 
-4.down arrow to select Disable and press Enter.  
+4. Down arrow to select Disable and press Enter.  
 
 ![說明](images/image_2.png)
 
-5.Press F4 to save and exit.  
+5. Press F4 to save and exit.  
 
 ---
 ## 3. DGX Spark First-Time Setup  
 
 ![說明](images/image_3.png)
 
-### 1.GPU  
+### 1. GPU  
 code :  
 $ lspci | grep -i nvidia  
-(1) lspci : 列出所有 PCI / PCIe 裝置，例如:顯示卡 GPU、網卡 NIC、SSD Controller、USB Controller 和 RAID 卡等。  
-(2) | : 把前面指令輸出，交給後面處理。  
-(3) grep -i nvidia : 搜尋包含 nvidia 的文字， grep : 搜尋文字。 -i : 忽略大小寫。
+Function: Check whether the system has an NVIDIA device installed (typically an NVIDIA GPU).  
+
+(1). lspci : List all PCI / PCIe devices, such as graphics cards (GPU), network cards (NIC), SSD controllers, USB controllers, and RAID cards.  
+(2). | : Pass the output of the previous command to the next command for processing.  
+(3). grep -i nvidia : Search for text containing "nvidia".  
+grep : Search text.  
+-i : Ignore uppercase and lowercase differences.  
 
 Output:  
 000f:01:00.0 VGA compatible controller : NVIDIA Corporation Device 2e12 (rev a1)  
-(1) 000f:01:00.0 : PCIe 裝置位址 ， 格式 : Domain:Bus:Device.Function  
-(2) VGA compatible controller : 顯示控制器（GPU)  
-(3) NVIDIA Corporation : 製造商 ： NVIDIA  
-(4) Device 2e12 : 裝置 ID
 
-## 2.NIC  
-code :    
+(1) 000f:01:00.0 : PCIe device address, format : Domain:Bus:Device.Function  
+(2) VGA compatible controller : Display controller (GPU)  
+(3) NVIDIA Corporation : Manufacturer : NVIDIA  
+(4) Device 2e12 : Device ID  
+
+## 2. NIC  
+
+code :  
 lspci | grep -i mellanox  
-(1) mellanox : Mellanox 裝置， 如:ConnectX NIC、InfiniBand、SmartNIC 和 RDMA  
+Function: List all PCIe devices, then display only Mellanox-related hardware.  
+
+(1) mellanox : Mellanox devices, such as ConnectX NICs, InfiniBand, SmartNICs, and RDMA devices.  
 
 Output:  
-4 Output  
-2 ConnectX-7, each one with two ports  
-2 NIC × 2 port = 4 Ethernet function  
+4 Output
+2 ConnectX-7 cards, each with two ports
+2 NICs × 2 ports = 4 Ethernet functions
+
 
 ---
 ## 4. Configure the Network Interfaces (For the following steps)  
@@ -133,7 +142,7 @@ $ sudo netplan apply
 
 code:  
 $ sudo nano /etc/apt/apt.conf.d/20auto-upgrades  
-
+功能:打開 Ubuntu 的「自動更新設定檔」來修改內容  
 APT::Periodic::Update-Package-Lists "0";  
 作用: 不自動更新「套件列表」，" 1 " 是要 ， " 0 " 是不要  
 APT::Periodic::Unattended-Upgrade "0";  
@@ -155,3 +164,49 @@ $ sudo systemctl mask fwupd-refresh.timer
 (1): systemctl : 控制 systemd 服務  
 (2): mask : 完全封鎖服務（最強關閉)  
 (3): fwupd-refresh.timer : 定期檢查 firmware 更新  
+
+## 6. Install NVIDIA Optimized Ubuntu Kernel
+
+1. Install the NVIDIA optimized Ubuntu kernel
+
+$ sudo apt update    
+$ sudo apt install -y linux-image-6.17.0-1014-nvidia  
+#NOTE: This will install the specific kernel version, not the latest NVIDIA optimized kernel.
+
+code:  
+$ sudo apt update  
+功能:確認目前有哪些軟體可以安裝  
+
+(1): update : 讓系統知道目前套件庫裡有哪些版本可以安裝 
+
+code:
+$ sudo apt install -y linux-image-6.17.0-1014-nvidia  
+功能: 安裝 NVIDIA 指定版本的 Linux 核心
+
+(1): linux-image-6.17.0-1014-nvidialinux-image-6.17.0-1014-nvidia :  
+要安裝的 Linux Kernel 套件名稱
+
+2. Update grub to change the default boot kernel  
+
+#The version to use here depends on the latest version that was installed with the previous command.  
+
+$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU\/Linux>DGX OS GNU\/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub
+
+code:
+$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU\/Linux>DGX OS GNU\/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub  
+功能: 把 Linux 開機預設 kernel 改成 NVIDIA 指定的 6.17.0-1014-nvidia，確保每次開機都固定進6.17.0-1014-nvidia  
+
+(1): sed : Linux 文字替換工具  
+(2): -i : 直接修改檔案（in-place)  
+(3): 's/舊文字/新文字/' : 搜尋取代語法  
+(4): ^GRUB_DEFAULT=.* : 所有以 GRUB_DEFAULT= 開頭的行，「 ^ 」表示行開頭，「 GRUB_DEFAULT= 」表示指定設定名稱，「 .* 」表示後面任何內容。  
+(5): GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia" : 將 「 Linux 6.17.0-1014-nvidia 」作為預設開機項目。在 sed 裡，「 / 」 是特殊符號，「 \/ 」才代表真正的 「 / 」。  
+(6): /etc/default/grub : GRUB 設定檔，GRUB = Linux 開機管理器。
+
+整體流程 :  
+
+修改 GRUB 設定  
+↓  
+指定預設 kernel  
+↓  
+下次開機固定進 NVIDIA kernel  
