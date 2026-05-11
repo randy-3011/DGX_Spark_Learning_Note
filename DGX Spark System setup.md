@@ -50,19 +50,19 @@ Output:
 ## 2. NIC  
 
 code :  
-lspci | grep -i mellanox  
+$ lspci | grep -i mellanox  
 Function: List all PCIe devices, then display only Mellanox-related hardware.  
 
 (1) mellanox : Mellanox devices, such as ConnectX NICs, InfiniBand, SmartNICs, and RDMA devices.  
 
 Output:  
-4 Output
-2 ConnectX-7 cards, each with two ports
-2 NICs × 2 ports = 4 Ethernet functions
-
+4 Output  
+2 ConnectX-7 cards, each with two ports  
+2 NICs × 2 ports = 4 Ethernet functions  
 
 ---
 ## 4. Configure the Network Interfaces (For the following steps)  
+
 Purpose : Ensure that you have the proper netplan config for your local network.  
 The network interface names could change after reboot  
 --> Create a persistent net link files under /etc/systemd/network, one for each interface.  
@@ -75,99 +75,113 @@ Target : To ensure persistent network interface names after reboot
 
 code :  
 $ sudo apt-get install jq -y  
-功能: 安裝 jq 工具  
-(1) sudo : 以管理員權限執行  
-(2) apt-get install : 安裝軟體  
-(3) jq : 一個專門處理 JSON 格式資料的工具，Linux 查硬體時常輸出 JSON，所以 jq 很重要。  
-(4) -y : 自動回答 yes  
+Function: Install the jq utility  
+
+(1) sudo : Execute with administrator privileges  
+(2) apt-get install : Install software  
+(3) jq : A tool specifically designed for processing JSON-formatted data. Hardware information in Linux is often output in JSON format, so jq is very important.  
+(4) -y : Automatically answer "yes"  
 
 code :  
 $ sudo lshw -json -C network  
-功能: 取得所有網卡的詳細資料（用 JSON 格式）  
-| jq '.[] | "\(.product), MAC: \(.serial)"'  
-功能: 把 JSON 轉成人類看得懂的文字   
+Function: Retrieve detailed information about all network cards (in JSON format)  
+| jq '.[] | "(.product), MAC: (.serial)"'  
+Function: Convert JSON data into human-readable text  
 | grep "ConnectX-7"  
-功能: 只留下 ConnectX-7
+Function: Keep only ConnectX-7 entries  
 
-(1) lshw : list hardware ， 列出電腦硬體資訊。    
-(2) -json : 輸出 JSON 格式，方便 jq 處理。  
-(3) -C network : 只列出 network 類別，Ethernet card, NIC, Mellanox 和 Wi-F.  
-(4) .[] : 把 JSON 裡「每一個網卡」拿出來  
-(5) \(.product) : 取出「網卡型號」  
-    \(.serial) : 取出「MAC 位址」 
+(1) lshw : list hardware, display computer hardware information.  
+(2) -json : Output in JSON format for easier processing with jq.  
+(3) -C network : Show only devices in the network category, such as Ethernet cards, NICs, Mellanox devices, and Wi-Fi adapters.  
+(4) .[] : Extract each network card entry from the JSON data.  
+(5) (.product) : Retrieve the network card model.  
+  (.serial) : Retrieve the MAC address.  
 
 Output:  
-所有 ConnectX-7 網卡 + 每個 port 的 MAC
+All ConnectX-7 network cards + the MAC address of each port.  
 
 ### (2). Create files at /etc/systemd/network/ with the desired name for the interface and the MAC address found in the previous step.  
-功能: 把每張 Mellanox 網卡（用 MAC 位址辨識）固定重新命名成 aerial100~103  
+
+Function: Permanently rename each Mellanox network card (identified by its MAC address) to aerial100~103.  
 
 ![說明](images/image_5.png)
 
 code:  
 (1):  
-sudo nano /etc/systemd/network/20-aerial100.link  
-作用: 用 nano 編輯一個 link 規則檔  
-(2):   
+$ sudo nano /etc/systemd/network/20-aerial100.link  
+Purpose: Use nano to edit a link rule file.  
+
+(2):  
 [Match]  
 MACAddress=4c:bb:47:ww:ww:ww  
-作用: 找到 MAC 是這個的網卡  
+Purpose: Match the network card with this MAC address.  
+
 (3):  
 [Link]  
 Name=aerial100  
-作用: 把這張卡改名叫 aerial100  
+Purpose: Rename this network card to aerial100.  
 
 NOTE:  
-後面的文件都會假設：
-(1):aerial00、aerial01 是拿來接 RU / fronthaul  
-(2):而且 aerial00 專門拿來做 PTP（時間同步）  
+The following documents will assume that:  
+(1): aerial00 and aerial01 are used for connecting to the RU / fronthaul.  
+(2): aerial00 is specifically used for PTP (time synchronization).  
 
-### (3). Apply the change
+### (3). Apply the change  
 
 ![說明](images/image_6.png)
 
 code:  
 $ sudo netplan apply  
-功能: 套用（啟用）你目前設定的網路配置。  
-(1): netplan : Ubuntu 的網路管理工具，用來設定 IP 位址 、 DHCP / static IP 、 gateway 、 DNS 、 網卡設定。  
-(2): apply : 套用設定，把設定檔 → 變成實際網路狀態。  
+Function: Apply (activate) the current network configuration settings.  
+
+(1): netplan : Ubuntu’s network management tool, used to configure IP addresses, DHCP / static IP, gateways, DNS, and network interface settings.  
+(2): apply : Apply the configuration, turning the configuration files into the actual network state.  
 
 ---
 ## 5. Disable Auto Upgrade  
 
 1. Purpose : prevents the installed version of the low latency kernel from being accidentally changed with a subsequent software upgrade.  
---> Edit the system file, and change the “1” to “0” for both lines.
+--> Edit the system file, and change the “1” to “0” for both lines.  
 
 ![說明](images/image_7.png)
 
 code:  
 $ sudo nano /etc/apt/apt.conf.d/20auto-upgrades  
-功能:打開 Ubuntu 的「自動更新設定檔」來修改內容  
-APT::Periodic::Update-Package-Lists "0";  
-作用: 不自動更新「套件列表」，" 1 " 是要 ， " 0 " 是不要  
-APT::Periodic::Unattended-Upgrade "0";  
-作用: 不要自動安裝更新，" 1 " 是半自動 ， " 0 " 是完全不自動
+Function: Open Ubuntu’s automatic update configuration file to modify its settings.  
 
-(1): nano : 開啟文字編輯器  
-(2): /etc/apt/apt.conf.d/20auto-upgrades : Ubuntu 自動更新設定檔  
+APT::Periodic::Update-Package-Lists "0";  
+Purpose: Disable automatic updates of the package lists.  
+"1" means enabled, "0" means disabled.  
+
+APT::Periodic::Unattended-Upgrade "0";  
+Purpose: Disable automatic installation of updates.  
+"1" means semi-automatic updates enabled, "0" means completely disabled.  
+
+(1): nano : Open the text editor.  
+(2): APT : Ubuntu’s package management system.  
+(3): Periodic : Periodic / automatically scheduled.  
+(4): Update-Package-Lists : Update the package lists.  
+(5): Unattended-Upgrade : Unattended upgrades (automatic updates without user interaction).  
+(6): /etc/apt/apt.conf.d/20auto-upgrades : Ubuntu automatic update configuration file.  
 
 
 2. Disable the fwupd-refresh timer   
---> Prevent fwupdmgr from automatically checking for any updates  
+--> Prevent fwupdmgr from automatically checking for any updates.   
 
 ![說明](images/image_8.png)
 
 code:  
 $ sudo systemctl mask fwupd-refresh.timer  
-功能: 關閉 firmware 自動更新
+Function: Disable automatic firmware updates.  
 
-(1): systemctl : 控制 systemd 服務  
-(2): mask : 完全封鎖服務（最強關閉)  
-(3): fwupd-refresh.timer : 定期檢查 firmware 更新  
+(1): systemctl : Control systemd services.  
+(2): mask : Completely block a service (strongest way to disable it).  
+(3): fwupd-refresh.timer : Periodically check for firmware updates.  
 
+---
 ## 6. Install NVIDIA Optimized Ubuntu Kernel
 
-1. Install the NVIDIA optimized Ubuntu kernel
+### 1. Install the NVIDIA optimized Ubuntu kernel
 
 $ sudo apt update    
 $ sudo apt install -y linux-image-6.17.0-1014-nvidia  
@@ -175,38 +189,42 @@ $ sudo apt install -y linux-image-6.17.0-1014-nvidia
 
 code:  
 $ sudo apt update  
-功能:確認目前有哪些軟體可以安裝  
-
-(1): update : 讓系統知道目前套件庫裡有哪些版本可以安裝 
-
-code:
+Function: Check which software packages are currently available for installation.  
 $ sudo apt install -y linux-image-6.17.0-1014-nvidia  
-功能: 安裝 NVIDIA 指定版本的 Linux 核心
+Function: Install the specified NVIDIA version of the Linux kernel.  
 
-(1): linux-image-6.17.0-1014-nvidialinux-image-6.17.0-1014-nvidia :  
-要安裝的 Linux Kernel 套件名稱
+(1): update : Refresh the package list so the system knows which versions are available in the repositories.  
+(2): linux-image-6.17.0-1014-nvidia :
+The name of the Linux kernel package to be installed.  
 
-2. Update grub to change the default boot kernel  
+### 2. Update grub to change the default boot kernel  
 
 #The version to use here depends on the latest version that was installed with the previous command.  
 
-$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU\/Linux>DGX OS GNU\/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub
+$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU\/Linux>DGX OS GNU\/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub  
 
 code:
-$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU\/Linux>DGX OS GNU\/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub  
-功能: 把 Linux 開機預設 kernel 改成 NVIDIA 指定的 6.17.0-1014-nvidia，確保每次開機都固定進6.17.0-1014-nvidia  
+$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub  
+Function: Change the default Linux boot kernel to NVIDIA’s specified version, 6.17.0-1014-nvidia, ensuring the system always boots into Linux 6.17.0-1014-nvidia by default.  
 
-(1): sed : Linux 文字替換工具  
-(2): -i : 直接修改檔案（in-place)  
-(3): 's/舊文字/新文字/' : 搜尋取代語法  
-(4): ^GRUB_DEFAULT=.* : 所有以 GRUB_DEFAULT= 開頭的行，「 ^ 」表示行開頭，「 GRUB_DEFAULT= 」表示指定設定名稱，「 .* 」表示後面任何內容。  
-(5): GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia" : 將 「 Linux 6.17.0-1014-nvidia 」作為預設開機項目。在 sed 裡，「 / 」 是特殊符號，「 \/ 」才代表真正的 「 / 」。  
-(6): /etc/default/grub : GRUB 設定檔，GRUB = Linux 開機管理器。
+(1): sed : Linux text replacement tool.  
+(2): -i : Modify the file directly (in-place).  
+(3): 's/old_text/new_text/' : Search-and-replace syntax.  
+(4): ^GRUB_DEFAULT=.* : Match all lines starting with GRUB_DEFAULT=.  
+" ^ " indicates the beginning of the line.  
+" GRUB_DEFAULT= " specifies the setting name.  
+" .* " represents any following content.  
+(5): GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia" : Set Linux 6.17.0-1014-nvidia as the default boot option.  
+In sed, " / " is a special character, so " \/ " is used to represent an actual " / ".  
+(6): /etc/default/grub : GRUB configuration file, GRUB is Linux bootloader.  
 
-整體流程 :  
+Overall process :  
 
-修改 GRUB 設定  
+Modify the GRUB configuration  
 ↓  
-指定預設 kernel  
+Set the default kernel  
 ↓  
-下次開機固定進 NVIDIA kernel  
+System boots into the NVIDIA kernel by default on the next startup  
+
+---
+## 7. Configure Linux Kernel Command-line
