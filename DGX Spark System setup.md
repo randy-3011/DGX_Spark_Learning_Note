@@ -234,7 +234,8 @@ Function: Change the default Linux boot kernel to NVIDIA’s specified version, 
 " ^ " indicates the beginning of the line.  
 " GRUB_DEFAULT= " specifies the setting name.  
 " .* " represents any following content.  
-(5): GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia" : Set Linux 6.17.0-1014-nvidia as the default boot option.  
+(5): GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia"   
+: Set Linux 6.17.0-1014-nvidia as the default boot option.  
 In sed, " / " is a special character, so " \/ " is used to represent an actual " / ".  
 (6): /etc/default/grub : GRUB configuration file, GRUB is Linux bootloader.  
 
