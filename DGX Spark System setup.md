@@ -301,3 +301,24 @@ Function: End of the here document.
 ---
 ## 8. Apply the Changes and Reboot to Load the Kernel
 
+### 1. 重新生成開機設定以套用新 kernel 參數
+
+![說明](images/image_9.png)
+
+code:
+$ sudo update-grub
+Function: 重新產生 GRUB 開機設定
+$ sudo reboot
+Function: 重新開機
+
+### 2. Verify that the kernel command-line parameters are configured properly
+
+$ uname -r
+6.17.0-1014-nvidia
+
+$ cat /proc/cmdline
+BOOT_IMAGE=/boot/vmlinuz-6.17.0-1014-nvidia root=UUID=7283b2b3-af33-4bd9-a896-b70a086ab2d3 ro pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none init_on_alloc=0 iommu.passthrough=0 console=tty0 plymouth.ignore-serial-consoles plymouth.use-simpledrm earlycon=uart,mmio32,0x16A00000 console=tty0 console=ttyS0,921600 crashkernel=1G-:0M quiet splash initcall_blacklist=tegra234_cbb_init pci=pcie_bus_safe vt.handoff=7
+
+
+### 3. Check if hugepages are enabled
+
