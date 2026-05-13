@@ -248,4 +248,56 @@ Set the default kernel
 System boots into the NVIDIA kernel by default on the next startup  
 
 ---
-## 7. Configure Linux Kernel Command-line
+## 7. Configure Linux Kernel Command-line  
+Purpose: Ensure the iommu.passthrough=y kernel parameter is NOT passed to the kernel  
+--> Edit the parameter in the grub file and append or update the parameters described below  
+
+$ cat <<"EOF" | sudo tee /etc/default/grub.d/cmdline.cfg  
+GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none"  
+EOF  
+
+#NOTE: The hugepage size 1G is optimized for DGX Spark  
+
+code:  
+$ cat <<"EOF" | sudo tee /etc/default/grub.d/cmdline.cfg  
+Function: Write the following kernel parameters into cmdline.cfg.  
+
+(1): cat : Display text.  
+(2): <<"EOF" : Treat all following text as input until EOF is encountered.  
+(3): sudo tee : Write to a file with root privileges.  
+(4): /etc/default/grub.d/cmdline.cfg : Create a new GRUB kernel parameter configuration file.  
+
+code:  
+GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none"  
+Function: Configure Linux for low-latency + realtime + DPDK + GPU-optimized mode  
+
+(1): GRUB_CMDLINE_LINUX= : Set the Linux kernel boot parameters to this configuration.  
+(2): pci=realloc=off : Disable PCIe resource reallocation to avoid PCIe resource conflicts.  
+(3):  
+default_hugepagesz=1G  
+hugepagesz=1G  
+: Linux memory normally uses 4KB pages, but DPDK/GPU workloads do not work well with highly fragmented small pages. Therefore, 1GB pages are used to reduce TLB misses, memory overhead, and latency. Without HugePages, DPDK may not run properly.  
+(4): hugepages=24 : Allocate 24 × 1GB HugePages.  
+(5): tsc=reliable : Force the use of a reliable time counter. 5G/PTP relies heavily on precise timing.  
+(6): processor.max_cstate=0 : Prevent the CPU from entering power-saving sleep states, because CPU sleep states increase latency.  
+(7): audit=0 : Disable Linux audit to reduce kernel overhead.  
+(8): idle=poll : Keep the CPU awake and continuously polling. This consumes more power but provides the lowest latency.  
+(9): rcu_nocb_poll : Make Linux RCU background work operate in polling mode, reducing interrupts and latency jitter, and improving DPDK / Aerial / 5G realtime stability.  
+(10): nosoftlockup : Disable soft lockup checks to avoid false warnings under high load.  
+(11): irqaffinity=0-3 : Pin IRQ interrupts to CPU 0-3 , leaving the other CPU cores for DPDK, cuBB, and GPU workloads.  
+(12): kthread_cpus=0-3 : Allow kernel threads to run only on CPU0-3.  
+(13): isolcpus=managed_irq,domain,4-19 : Isolate CPU 4-19 so Linux avoids using them. These cores are reserved for DPDK, cuBB, and realtime threads.  
+(14): nohz_full=4-19 : Disable scheduler ticks on CPU 4-19 to reduce jitter.  
+(15): rcu_nocbs=4-19 : Prevent RCU callbacks from running on CPU 4-19 to avoid interfering with realtime workloads.  
+(16): earlycon : Enable Linux kernel debug messages during the very early boot stage, which helps debug kernel, driver, GPU, DPDK, or hardware initialization issues.  
+(17): module_blacklist=nouveau : Disable the nouveau driver. Aerial must use the official NVIDIA driver.  
+(18): acpi_power_meter.force_cap_on=y : Force-enable ACPI power meter power capping / monitoring features, making power and power-consumption management more stable on DGX/Aerial servers.  
+(19): init_on_alloc=0 : Disable automatic memory zeroing during Linux memory allocation to reduce latency and CPU overhead, improving DPDK / Aerial / GPU server performance.  
+(20): preempt=none : Disable kernel preemption to reduce context switching.  
+
+code:  
+EOF  
+Function: End of the here document.  
+---
+## 8. Apply the Changes and Reboot to Load the Kernel
+
