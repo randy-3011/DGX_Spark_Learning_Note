@@ -35,18 +35,18 @@
 2. Use right arrow key to navigate to Security tab.  
 3. Use down arrow key to navigate to Secure Boot menu and press Enter.  
 
-![說明](images/image_1.png)
+![說明](images/image_01.png)
 
 4. Down arrow to select Disable and press Enter.  
 
-![說明](images/image_2.png)
+![說明](images/image_02.png)
 
 5. Press F4 to save and exit.  
 
 ---
 ## 3. DGX Spark First-Time Setup  
 
-![說明](images/image_3.png)
+![說明](images/image_03.png)
 
 ### 1. GPU  
 code :  
@@ -91,7 +91,7 @@ Target : To ensure persistent network interface names after reboot
 ### (1). Run to check for network devices and look for the entries.  
 --> To find the MAC address of the CX7 NIC.  
 
-![說明](images/image_4.png)
+![說明](images/image_04.png)
 
 code :  
 $ sudo apt-get install jq -y  
@@ -124,7 +124,7 @@ All ConnectX-7 network cards + the MAC address of each port.
 
 Function: Permanently rename each Mellanox network card (identified by its MAC address) to aerial100~103.  
 
-![說明](images/image_5.png)
+![說明](images/image_05.png)
 
 code:  
 (1):  
@@ -148,7 +148,7 @@ The following documents will assume that:
 
 ### (3). Apply the change  
 
-![說明](images/image_6.png)
+![說明](images/image_06.png)
 
 code:  
 $ sudo netplan apply  
@@ -163,7 +163,7 @@ Function: Apply (activate) the current network configuration settings.
 1. Purpose : prevents the installed version of the low latency kernel from being accidentally changed with a subsequent software upgrade.  
 --> Edit the system file, and change the “1” to “0” for both lines.  
 
-![說明](images/image_7.png)
+![說明](images/image_07.png)
 
 code:  
 $ sudo nano /etc/apt/apt.conf.d/20auto-upgrades  
@@ -188,7 +188,7 @@ Purpose: Disable automatic installation of updates.
 2. Disable the fwupd-refresh timer   
 --> Prevent fwupdmgr from automatically checking for any updates.   
 
-![說明](images/image_8.png)
+![說明](images/image_08.png)
 
 code:  
 $ sudo systemctl mask fwupd-refresh.timer  
@@ -299,26 +299,80 @@ code:
 EOF  
 Function: End of the here document.  
 ---
-## 8. Apply the Changes and Reboot to Load the Kernel
+## 8. Apply the Changes and Reboot to Load the Kernel  
 
-### 1. 重新生成開機設定以套用新 kernel 參數
+### 1. Regenerate the boot configuration to apply the new kernel parameters  
 
-![說明](images/image_9.png)
+![說明](images/image_09.png)
 
-code:
-$ sudo update-grub
-Function: 重新產生 GRUB 開機設定
-$ sudo reboot
-Function: 重新開機
+code:  
+$ sudo update-grub  
+Function: Regenerate the GRUB boot configuration.  
+$ sudo reboot  
+Function: Reboot the system.  
 
 ### 2. Verify that the kernel command-line parameters are configured properly
 
-$ uname -r
-6.17.0-1014-nvidia
+$ uname -r  
+Function: Check the currently running Linux kernel version.  
+Output:  
+6.17.0-1014-nvidia  
 
-$ cat /proc/cmdline
-BOOT_IMAGE=/boot/vmlinuz-6.17.0-1014-nvidia root=UUID=7283b2b3-af33-4bd9-a896-b70a086ab2d3 ro pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none init_on_alloc=0 iommu.passthrough=0 console=tty0 plymouth.ignore-serial-consoles plymouth.use-simpledrm earlycon=uart,mmio32,0x16A00000 console=tty0 console=ttyS0,921600 crashkernel=1G-:0M quiet splash initcall_blacklist=tegra234_cbb_init pci=pcie_bus_safe vt.handoff=7
+(1): uname : Display the Unix/Linux system name.  
+(2): -r : Show the Linux kernel version.  
 
+$ cat /proc/cmdline  
+Function: Display the actual boot parameters received by the Linux kernel.  
+Output:  
+BOOT_IMAGE=/boot/vmlinuz-6.17.0-1014-nvidia root=UUID=7283b2b3-af33-4bd9-a896-b70a086ab2d3 ro pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none init_on_alloc=0 iommu.passthrough=0 console=tty0 plymouth.ignore-serial-consoles plymouth.use-simpledrm earlycon=uart,mmio32,0x16A00000 console=tty0 console=ttyS0,921600 crashkernel=1G-:0M quiet splash initcall_blacklist=tegra234_cbb_init pci=pcie_bus_safe vt.handoff=7  
 
-### 3. Check if hugepages are enabled
+(1): /proc/cmdline : Linux kernel boot parameter file. /proc is a virtual filesystem.  
+(2): BOOT_IMAGE=/boot/vmlinuz-6.17.0-1014-nvidia : The currently booted kernel image is 6.17.0-1014-nvidia.  
+(3): root=UUID=7283b2b3-af33-4bd9-a896-b70a086ab2d3 : Specifies where the Linux root filesystem is located.  
+(4): ro : Initially mount the root filesystem as read-only, then switch back to read-write (rw) after boot.  
+(5):
+pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none init_on_alloc=0  
+: Confirm whether these parameters match the settings configured in the previous step.  
+(6): iommu.passthrough=0 : Disable passthrough mode.  
+(7): console=tty0 : Display the Linux console on the main screen.  
+(8): plymouth.ignore-serial-consoles : Do not run Plymouth on the serial console, avoiding animation interference with serial logs.  
+(9): plymouth.use-simpledrm : Use the simple DRM framebuffer to display the boot screen.  
+(10): earlycon=uart,mmio32,0x16A00000 : Allow the kernel to output debug messages during the very early boot stage.  
+uart : Use UART serial console.  
+mmio32 : 32-bit memory-mapped I/O.  
+0x16A00000 : UART controller address.  
+(11): console=ttyS0,921600 : Specify the serial console, allowing remote server debugging.  
+ttyS0 : The first serial port.  
+921600 : Baud rate (transmission speed).  
+(12): crashkernel=1G-:0M : Reserve memory for kdump / crash dumps.  
+(13): quiet : Reduce the amount of boot log output displayed.  
+(14): splash : Display the Ubuntu boot animation.  
+(15): initcall_blacklist=tegra234_cbb_init :  
+initcall_blacklist : Prevent a specific kernel initialization function from executing.  
+tegra234_cbb_init : An initialization function for the NVIDIA Tegra234 platform.  
+(16): pci=pcie_bus_safe : PCIe safe mode. Use more conservative PCIe bus settings to avoid resource allocation issues.  
+(17): vt.handoff=7 : Control the transition from the boot console to the graphical console, making the boot screen transition smoother.  
 
+### 3. Check if hugepages are enabled  
+
+![說明](images/image_10.png)
+
+code:  
+$ grep -i huge /proc/meminfo  
+Function: Extract all HugePage-related information from Linux memory information.  
+Output:  
+AnonHugePages:         0 kB  
+ShmemHugePages:        0 kB  
+FileHugePages:         0 kB  
+HugePages_Total:      24  
+HugePages_Free:       24  
+HugePages_Rsvd:        0  
+HugePages_Surp:        0  
+Hugepagesize:    1048576 kB  
+Hugetlb:        25165824 kB  
+#NOTE : Mainly focus on HugePages_Total, HugePages_Free, Hugepagesize, and Hugetlb. The other fields are not used.  
+
+(1): huge : Search for entries containing huge.  
+(2): /proc/meminfo : Linux real-time memory information.  
+
+---
