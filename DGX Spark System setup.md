@@ -250,9 +250,7 @@ System boots into the NVIDIA kernel by default on the next startup
 Purpose: Ensure the iommu.passthrough=y kernel parameter is NOT passed to the kernel  
 --> Edit the parameter in the grub file and append or update the parameters described below  
 
-$ cat <<"EOF" | sudo tee /etc/default/grub.d/cmdline.cfg  
-GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX pci=realloc=off default_hugepagesz=1G hugepagesz=1G hugepages=24 tsc=reliable processor.max_cstate=0 audit=0 idle=poll rcu_nocb_poll nosoftlockup irqaffinity=0-3 kthread_cpus=0-3 isolcpus=managed_irq,domain,4-19 nohz_full=4-19 rcu_nocbs=4-19 earlycon module_blacklist=nouveau acpi_power_meter.force_cap_on=y init_on_alloc=0 preempt=none"  
-EOF  
+![說明](images/image_09-3.png)
 
 #NOTE: The hugepage size 1G is optimized for DGX Spark  
 
