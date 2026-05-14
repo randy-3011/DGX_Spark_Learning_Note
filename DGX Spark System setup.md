@@ -298,6 +298,7 @@ hugepagesz=1G
 code:  
 EOF  
 Function: End of the here document.  
+
 ---
 ## 8. Apply the Changes and Reboot to Load the Kernel  
 
@@ -376,3 +377,34 @@ Hugetlb:        25165824 kB
 (2): /proc/meminfo : Linux real-time memory information.  
 
 ---
+## 9. Install Dependency Packages  
+
+Purpose: Install the prerequisite packages.  
+
+$ sudo apt-get update  
+$ sudo apt-get install -y build-essential linux-headers-$(uname -r) dkms unzip linuxptp pv apt-utils net-tools  
+
+code:  
+$ sudo apt-get update  
+Function: Update Ubuntu’s package list.  
+$ sudo apt-get install -y build-essential linux-headers-$(uname -r) dkms unzip linuxptp pv apt-utils net-tools  
+Function: Install the core development tools, kernel headers, PTP tools, and networking utilities required for the Aerial / DPDK / NVIDIA environment.  
+
+(1): apt-get : Ubuntu package management tool.  
+(2): update : Refresh the list of available software packages. This only updates the package index.  
+(3): apt-get install : Install packages.  
+(4): build-essential : Install the basic Linux build tools, including: gcc / g++ / make / libc-dev  
+(5): linux-headers-$(uname -r) : Install the kernel headers corresponding to the currently running kernel.  
+$(uname -r) : Command substitution. Execute the command inside the parentheses first, then insert the result into the original position. This ensures the headers exactly match the current kernel.  
+(6): dkms : Automatically rebuild kernel modules when the kernel is updated.  
+(7): unzip : Extract ZIP files.  
+(8): linuxptp : Install Linux PTP tools for precise time synchronization.  
+(9): pv : Display data transfer progress.  
+(10): apt-utils : APT utility tools, used to avoid messages such as debconf: delaying package configuration.  
+(11): net-tools : Traditional networking tools, including ifconfig, netstat, and route.  
+
+---
+## 10. Install DOCA OFED and Mellanox Firmware Tools on the Host
+
+### 1. Check if there is an existing MOFED installed on the host system.
+
