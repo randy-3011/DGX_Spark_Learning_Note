@@ -404,7 +404,59 @@ $(uname -r) : Command substitution. Execute the command inside the parentheses f
 (11): net-tools : Traditional networking tools, including ifconfig, netstat, and route.  
 
 ---
-## 10. Install DOCA OFED and Mellanox Firmware Tools on the Host
+## 10. Install DOCA OFED and Mellanox Firmware Tools on the Host  
+#NOTE: Following the DOCA Installation Guide for Linux  
+Link: https://docs.nvidia.com/doca/sdk/doca-installation-guide-for-linux/index.html
 
-### 1. Check if there is an existing MOFED installed on the host system.
+### 1. Check if there is an existing MOFED installed on the host system.  
+
+![說明](images/image_11.png)
+
+code:  
+$ ofed_info -s  
+Function: Display the currently installed Mellanox OFED version.  
+Output:  
+OFED-internal-24.04-0.6.6:  
+Description: The currently installed Mellanox OFED version is 24.04.  
+
+(1): ofed_info : View information about the Mellanox high-speed networking driver environment.  
+(2): -s : Display short version information.  
+
+### 2. Uninstall Existing MOFED Installation
+
+$ for f in $( dpkg --list | grep -E 'doca|flexio|dpa-gdbserver|dpa-stats|dpaeumgmt' | awk '{print $2}' ); do echo $f ; sudo apt remove --purge $f -y ; done  
+$ sudo /usr/sbin/ofed_uninstall.sh --force  
+$ sudo apt-get autoremove  
+
+code:
+$ for f in $( dpkg --list | grep -E 'doca|flexio|dpa-gdbserver|dpa-stats|dpaeumgmt' | awk '{print $2}' ); do echo $f ; sudo apt remove --purge $f -y ; done  
+Function: Find all installed packages related to doca, flexio, and dpa-*, then completely remove them one by one.  
+$ sudo /usr/sbin/ofed_uninstall.sh --force  
+Function: Forcefully run the OFED uninstaller.  
+$ sudo apt-get autoremove  
+Function: Remove dependency packages that are no longer required by any installed package.  
+
+#NOTE: Using game deletion as an analogy: the first line deletes the apps, the second line fully uninstalls the NVIDIA network driver stack, and the third line cleans up temporary files / unused DLLs / empty folders.  
+
+(1): for f in : Perform an action for each package.  
+(2): dpkg --list : List all Debian packages.  
+(3): grep -E 'doca|flexio|dpa-gdbserver|dpa-stats|dpaeumgmt' : Filter package names.  
+-E : Enable extended regular expressions.  
+| : Allow OR conditions.  
+(4): awk '{print $2}' : Extract the second column from each line. Column 1 = status, column 2 = package name. Only the package name is needed afterward.  
+awk : Split each line of text into fields using spaces / tabs.  
+(5): do ... done : Execute commands for each package.  
+(6): echo $f : Display the package currently being processed, making it easier to know which package is being removed.  
+(7): sudo apt remove --purge $f -y : Actually remove the package.  
+apt remove : Remove the package.  
+--purge : Remove the package together with its configuration files.  
+$f : The current package name.  
+(8): /usr/sbin/ofed_uninstall.sh : Shell script (uninstall script).  
+/usr/ : Linux system program directory.  
+/sbin/ : System binary directory.  
+ofed_uninstall.sh : Official OFED uninstall script used to remove the RDMA stack, Mellanox driver, mlx5 module, OFED packages, and userspace libraries.  
+(9): --force : Force mode.  
+(10): autoremove : Automatically remove leftover unused packages.  
+
+### 3.  Install DOCA OFED
 
