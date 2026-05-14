@@ -203,9 +203,7 @@ Function: Disable automatic firmware updates.
 
 ### 1. Install the NVIDIA optimized Ubuntu kernel
 
-$ sudo apt update    
-$ sudo apt install -y linux-image-6.17.0-1014-nvidia  
-#NOTE: This will install the specific kernel version, not the latest NVIDIA optimized kernel.
+![說明](images/image_09-1.png)
 
 code:  
 $ sudo apt update  
