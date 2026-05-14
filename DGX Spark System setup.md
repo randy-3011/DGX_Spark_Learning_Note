@@ -219,7 +219,7 @@ The name of the Linux kernel package to be installed.
 
 #The version to use here depends on the latest version that was installed with the previous command.  
 
-$ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU\/Linux>DGX OS GNU\/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub  
+![說明](images/image_09-2.png)
 
 code:
 $ sudo sed -i 's/^GRUB_DEFAULT=.*/GRUB_DEFAULT="Advanced options for DGX OS GNU/Linux>DGX OS GNU/Linux, with Linux 6.17.0-1014-nvidia"/' /etc/default/grub  
