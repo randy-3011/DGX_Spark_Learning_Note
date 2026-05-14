@@ -310,6 +310,8 @@ Function: Reboot the system.
 
 ### 2. Verify that the kernel command-line parameters are configured properly
 
+![說明](images/image_10-1.png)
+
 $ uname -r  
 Function: Check the currently running Linux kernel version.  
 Output:  
