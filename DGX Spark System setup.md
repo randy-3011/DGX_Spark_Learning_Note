@@ -526,7 +526,9 @@ Output:
 OFED-internal-25.10-1.7.  
 Mean: Successfully upgraded to the 25.10 generation.  
 
-
+執行結束時間： 22:09  
+結果：執行時間嚴重Delay  
+問題：前段的指令理解花太多時間，需重新評估使用時間，中間有虛耗一點時間會改善  
 
 
 
