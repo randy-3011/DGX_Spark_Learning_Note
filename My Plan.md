@@ -9,8 +9,8 @@
 預期結果: 完成 OAI + Aerial + RU 整合，得出相關數據  
 
 ---
-## 一週工作安排
-
+## 第一週工作安排
+---
 ### Day 1:  
 
 工作內容:  
@@ -47,8 +47,10 @@
 3.整合出完整的安裝流程圖
 
 進度查核:
+＃由於有小考需讀書因此進度順延  
 
 反省及未來計畫修改部分:
+
 
 ---
 Day 3:  
@@ -62,6 +64,7 @@ Day 3:
 2.找出官方文件級學長筆記的差異點
 
 進度查核:
+＃由於有小考需讀書因此進度順延  
 
 反省及未來計畫修改部分:
 
@@ -73,9 +76,10 @@ Day 4:
 2.並整理差異表格
 
 預期產出:  
-1.整理出差異表格後能理解差異點在哪及為何如此改善
+1.整理出差異表格後能理解差異點在哪及為何如此改善  
 
 進度查核:
+＃完成課堂作業  
 
 反省及未來計畫修改部分:
 
@@ -83,13 +87,107 @@ Day 4:
 Day 5:  
 
 工作內容:  
-1.安排接下來的研究計畫
+1.重新編排進度  
+2.更改筆記內容為英文及編排格式  
+3.複習前面內容  
 
 預期產出:  
-1.結束第二階段安排出第三階段的大致工作
+1.修改好筆記內容
+2.複習好前面內容  
 
 進度查核:
+已達成
 
 反省及未來計畫修改部分:
+修改安排進度範圍
+---
+## 第二週工作安排
+---
+### Day 1:  
+
+工作內容:  
+官方文件研讀到-- Configure Linux Kernel Command-line  
+
+預期產出:  
+1.自行記錄的相關筆記  
+
+進度查核:  
+1.進度只到 Install NVIDIA Optimized Ubuntu Kernal  
+
+反省及未來計畫修改部分:  
+建立起學習模式需運用
 
 ---
+### Day 2:  
+
+工作內容:  
+官方文件研讀到-- Apply the Changes and Reboot to Load the Kernal   
+
+預期產出:  
+1.自行記錄的相關筆記
+
+進度查核:
+僅完成到 Apply the Changes and Reboot to Load the Kernal 前半部分
+
+反省及未來計畫修改部分:
+思考圖片標示的模樣是否需改善  
+---
+Day 3:  
+
+工作內容:  
+完成到Install DOCA OFED and Mellanox Firmware Tools  
+
+預期產出:  
+1.自行記錄的相關筆記  
+
+進度查核:
+僅完成到 Apply the Changes and Reboot to Load the Kernal 結束
+
+反省及未來計畫修改部分:
+多問細節的內容驗證正確性
+---
+Day 4:  
+
+工作內容:  
+1.完成到Install DOCA OFED and Mellanox Firmware Tools 結束  
+2.圖片修改
+
+預期產出:  
+1.自行記錄的相關筆記
+2.將之前貼不下的程式碼圖片換其他方法貼上  
+
+進度查核:
+1.僅完成到 Install DOCA OFED and Mellanox Firmware Tools 開頭部分  
+2.還有些許圖未改上  
+
+反省及未來計畫修改部分:
+之後的圖片貼取方式沿用
+---
+Day 5:  
+
+工作內容:  
+1.完成到Install ptp4I and phc2sys 大致瀏覽  
+
+預期產出:  
+1.完成Install DOCA OFED and Mellanox Firmware Tools的筆記  
+2.稍微理解後續步驟  
+
+進度查核:
+僅完成到 Install DOCA OFED and Mellanox Firmware Tools  
+
+反省及未來計畫修改部分:
+中間內容多花許多時間讀懂，使用平板閱讀較慢  
+過去都忘記記錄時間需改善
+
+
+
+
+
+
+
+
+
+
+
+
+
