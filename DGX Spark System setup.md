@@ -458,6 +458,83 @@ ofed_uninstall.sh : Official OFED uninstall script used to remove the RDMA stack
 
 ### 3.  Install DOCA OFED
 
-
+5/15:
+預期執行到：Install ptp4l and phc2sys
+時間 ： 5/15 19:30 ~ 22:00
 
 code:  
+$ wget https://www.mellanox.com/downloads/DOCA/DOCA_v3.2.1/host/doca-host_3.2.1-044000-25.10-ubuntu2404_arm64.deb  
+Function : Download the DOCA repository installation package (.deb file) from the NVIDIA/Mellanox official website.  
+$ sudo dpkg -i doca-host_3.2.1-044000-25.10-ubuntu2404_arm64.deb  
+Function : Install the NVIDIA DOCA repository package.  
+$ sudo apt-get update  
+Function : Re-download the package list.  
+$ sudo apt-get -y install doca-tools doca-ofed  mlnx-fw-updater  
+Function : Start installing NVIDIA DOCA / OFED / ConnectX-7 firmware tools.  
+
+(1): wget : Linux download utility used to download files from the internet and save them into the current terminal directory.  
+(2): https://www.mellanox.com/downloads/DOCA/（URL）: NVIDIA/Mellanox official download location.  
+(3): doca-host_…deb : NVIDIA DOCA repository installation package for Ubuntu 24.04 ARM64 hosts. After installation, Ubuntu knows where to download doca-ofed and doca-tools.  
+.deb : Debian Package (.deb).  
+(4): dpkg : Debian package manager, the lowest-level package installation tool in Ubuntu/Debian.  
+(5): apt-get update : Retrieve the package index from the NVIDIA server.  
+(6): doca-tools : DOCA tool suite, including debug tools, diagnostic tools, and utilities.  
+(7): doca-ofed : NVIDIA/Mellanox OFED networking stack. After installation, it provides RDMA, mlx5 drivers, ibverbs, RoCE, GPUDirect, and DPDK support.  
+(8): mlnx-fw-updater : Mellanox firmware updater used to update ConnectX NIC firmware.  
+
+Output:  
+The mlnx-fw-updater should update the NIC FW automatically if it detects the newer version is available.  
+(1):  
+Attempting to perform Firmware update…  
+Mean: Start updating the firmware.  
+(2):  
+Querying Mellanox devices firmware …  
+Mean: Scan Mellanox/NVIDIA NICs and check their model, version, and firmware.  
+(3):  
+From Device #1: to Restart needed for updates to take effect.  
+Point 1:  
+FW             28.45.4028     28.47.1088  
+Mean: The current NIC firmware version is 28.45.4028, but the NVIDIA repository provides a newer version 28.47.1088.  
+Point 2:  
+Status:           Update required  
+Mean: Indicates that a firmware update is required.  
+Point 3:  
+Found 1 device(s) requiring firmware update…  
+Mean: Found 1 NIC that requires a firmware update.  
+Point 4:  
+Device #1: Updating FW …  
+Mean: Start updating the firmware.  
+Point 5:  
+-W- BME is not set, DMA access is not supported. please make sure mst driver and mlx5 driver are loaded  
+Mean: Warning message.  
+BME is not set: The NIC is not yet allowed to perform DMA directly.  
+DMA access is not supported: DMA access is temporarily unavailable.  
+please make sure mst driver and mlx5 driver are loaded: The mst driver is not fully loaded yet, and mlx5 is not ready.  
+Point 6:  
+FSMST_INITIALIZE -   OK  
+Writing Boot image component -   OK        DONE  
+Mean: Firmware update completed successfully.  
+Point 7:  
+Restart needed for updates to take effect.  
+Mean: A reboot is required for the firmware update to actually take effect.  
+
+code:  
+$ ofed_info -s  
+Function: Display the current OFED version information.  
+
+Output:  
+OFED-internal-25.10-1.7.  
+Mean: Successfully upgraded to the 25.10 generation.  
+
+
+
+
+
+
+
+
+
+
+
+
+
