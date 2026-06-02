@@ -572,14 +572,47 @@ $ sudo mst status -v
 Function: Display all Mellanox/NVIDIA PCIe devices.  
 
 Output:  
-MST PCI module loaded  
+1. MST PCI module loaded  
 Mean: The MST kernel driver has been loaded.  
-MST PCI configuration module loaded  
+2. MST PCI configuration module loaded  
 Mean: The MST PCI configuration module has been loaded.  
-PCI devices: ...  
+3. PCI devices: ...  
 Mean: Lists all devices detected by MST.  
 
 ### 5. Check the link status of port 0  
+
+![說明](images/image_15.png)
+
+code:  
+$ sudo mlxlink -d 0000:01:00.0   
+Function: Check the physical link status of Port 1 on a ConnectX-7 adapter.  
+
+(1): mlxlink : A link diagnostic tool provided by Mellanox.  
+Purpose: Check whether the link is up, view link speed, view FEC settings, check DAC/fiber status, and inspect error statistics.  
+(2): -d : Specify which NIC to inspect.  
+
+Output:  
+1. Operational Info...  
+Mean: Current operational status.
+2. Supported Info...  
+Mean: The link speeds supported by this NIC.  
+3. Troubleshooting Info...  
+Mean: Used to quickly determine whether there is a problem with the ConnectX network card link and identify the possible cause.  
+4. Tool Information...  
+Mean: Displays the software and firmware version information related to the currently running mlxlink utility.  
+
+(1):  
+Width : 4x  
+Mean: Data is being transmitted over 4 lanes.  
+(2):  
+Supported Cable Speed  
+Mean: The link speeds supported by the currently connected DAC cable.  
+(3):  
+Status Opcode : 0  
+Mean: No errors detected.  
+
+### 6. Configure the CX7 NIC  
+
 
 
 
