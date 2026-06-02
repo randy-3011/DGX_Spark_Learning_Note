@@ -379,6 +379,8 @@ Hugetlb:        25165824 kB
 
 Purpose: Install the prerequisite packages.  
 
+![說明](images/image_11-1.png)
+
 $ sudo apt-get update  
 $ sudo apt-get install -y build-essential linux-headers-$(uname -r) dkms unzip linuxptp pv apt-utils net-tools  
 
