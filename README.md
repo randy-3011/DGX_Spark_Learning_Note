@@ -5,8 +5,10 @@
 ---
 ## 內容條目
 
-Nvdia Aerial CUDA-Accelerated RAN learning ---  (未來貼上連結)  
-DGX Spark System Setup ---  (未來貼上連結)  
+Nvdia Aerial CUDA-Accelerated RAN learning ---  
+https://www.nvidia.com/zh-tw/industries/telecommunications/ai-ran/   
+DGX Spark System Setup ---  
+https://docs.nvidia.com/aerial/cuda-accelerated-ran/latest/install_guide/installing_tools_spark.html#configure-linux-kernel-command-line)  
 OAI + Aerial + RU 整合 ---  (未來貼上連結)
 
 ---
