@@ -458,9 +458,7 @@ ofed_uninstall.sh : Official OFED uninstall script used to remove the RDMA stack
 
 ### 3.  Install DOCA OFED
 
-5/15:
-預期執行到：Install ptp4l and phc2sys
-時間 ： 5/15 19:30 ~ 22:00
+![說明](images/image_13.png)
 
 code:  
 $ wget https://www.mellanox.com/downloads/DOCA/DOCA_v3.2.1/host/doca-host_3.2.1-044000-25.10-ubuntu2404_arm64.deb   
@@ -525,10 +523,6 @@ Function: Display the current OFED version information.
 Output:  
 OFED-internal-25.10-1.7.  
 Mean: Successfully upgraded to the 25.10 generation.  
-
-執行結束時間： 22:09  
-結果：執行時間嚴重Delay  
-問題：前段的指令理解花太多時間，需重新評估使用時間，中間有虛耗一點時間會改善  
 
 6/2:
 預期執行到：Install DOCA OFED and Mellanox Firmware Tools on the Host 完成  
