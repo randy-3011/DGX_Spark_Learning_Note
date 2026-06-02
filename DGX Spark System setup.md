@@ -424,9 +424,7 @@ Description: The currently installed Mellanox OFED version is 24.04.
 
 ### 2. Uninstall Existing MOFED Installation
 
-$ for f in $( dpkg --list | grep -E 'doca|flexio|dpa-gdbserver|dpa-stats|dpaeumgmt' | awk '{print $2}' ); do echo $f ; sudo apt remove --purge $f -y ; done  
-$ sudo /usr/sbin/ofed_uninstall.sh --force  
-$ sudo apt-get autoremove  
+![說明](images/image_12.png)
 
 code:
 $ for f in $( dpkg --list | grep -E 'doca|flexio|dpa-gdbserver|dpa-stats|dpaeumgmt' | awk '{print $2}' ); do echo $f ; sudo apt remove --purge $f -y ; done  
