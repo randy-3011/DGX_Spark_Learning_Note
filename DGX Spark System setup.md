@@ -528,6 +528,9 @@ Mean: Successfully upgraded to the 25.10 generation.
 預期執行到：Install DOCA OFED and Mellanox Firmware Tools on the Host 完成  
 時間 ： 6/2 19:00 ~ 22:00  
 
+### 4.  Verify installation
+
+
 
 
 
