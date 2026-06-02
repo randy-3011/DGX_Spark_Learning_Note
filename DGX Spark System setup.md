@@ -463,7 +463,7 @@ ofed_uninstall.sh : Official OFED uninstall script used to remove the RDMA stack
 時間 ： 5/15 19:30 ~ 22:00
 
 code:  
-$ wget https://www.mellanox.com/downloads/DOCA/DOCA_v3.2.1/host/doca-host_3.2.1-044000-25.10-ubuntu2404_arm64.deb  
+$ wget https://www.mellanox.com/downloads/DOCA/DOCA_v3.2.1/host/doca-host_3.2.1-044000-25.10-ubuntu2404_arm64.deb   
 Function : Download the DOCA repository installation package (.deb file) from the NVIDIA/Mellanox official website.  
 $ sudo dpkg -i doca-host_3.2.1-044000-25.10-ubuntu2404_arm64.deb  
 Function : Install the NVIDIA DOCA repository package.  
@@ -530,7 +530,9 @@ Mean: Successfully upgraded to the 25.10 generation.
 結果：執行時間嚴重Delay  
 問題：前段的指令理解花太多時間，需重新評估使用時間，中間有虛耗一點時間會改善  
 
-
+6/2:
+預期執行到：Install DOCA OFED and Mellanox Firmware Tools on the Host 完成  
+時間 ： 6/2 19:00 ~ 22:00  
 
 
 
