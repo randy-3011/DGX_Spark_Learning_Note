@@ -528,12 +528,58 @@ Mean: Successfully upgraded to the 25.10 generation.
 預期執行到：Install DOCA OFED and Mellanox Firmware Tools on the Host 完成  
 時間 ： 6/2 19:00 ~ 22:00  
 
-### 4.  Verify installation
+### 4. Verify installation
 
+![說明](images/image_14.png)
 
+code:  
+$ apt list --installed | grep mft  
+Function: Check which MFT packages are currently installed on the system.  
+(1): apt list --installed : List all installed packages.  
+(2): grep mft : Display only packages whose names contain "mft".  
 
+Output:  
+kernel-mft-dkms/DOCA-HOST-3.2.1,now 4.34.1.10-1 all [installed,automatic]   
+mft-mlx5/DOCA-HOST-3.2.1,now 4.34.1-10 arm64 [installed,automatic]  
+mft-nvredfish/DOCA-HOST-3.2.1,now 4.34.1-10 arm64 [installed,automatic]
+mft/unknown,now 4.34.1.12-1 arm64 [installed,automatic]
 
+(1): kernel-mft-dkms : MFT kernel driver.  
+dkms : Automatically rebuilds the driver when the Linux kernel is updated.  
+(2): all : Not tied to any specific CPU architecture because this package mainly contains source code.  
+(3): [installed,automatic] : Installed and automatically installed as a dependency.  
+(4): mft-mlx5 : Management module specifically for ConnectX devices.  
+(5): arm64 : Indicates that the package is intended for ARM CPUs.  
+(6): redfish : A server remote management standard that allows management systems to use APIs to: Query hardware status/Update firmware/Manage devices. This is generally not used for Aerial deployments.  
+(7): mft/unknown : APT does not know the original repository source of this package. This does not affect functionality; as long as it shows "installed", the package has been installed correctly.  
+mft : Main package of Mellanox Firmware Tools.  
 
+code:  
+$ sudo mst version  
+Function : Display the MST/MFT version information.  
+
+Output:  
+mst, mft 4.34.1-12, Git SHA Hash: 59c0ccce2  
+Mean: MFT version = 4.34.1-12, Git Commit ID = 59c0ccce2.  
+
+code:  
+$ sudo mst start  
+Function : Start the MST driver.  
+Purpose: Allow Linux to directly manage and control ConnectX NICs.  
+
+code:  
+$ sudo mst status -v  
+Function: Display all Mellanox/NVIDIA PCIe devices.  
+
+Output:  
+MST PCI module loaded  
+Mean: The MST kernel driver has been loaded.  
+MST PCI configuration module loaded  
+Mean: The MST PCI configuration module has been loaded.  
+PCI devices: ...  
+Mean: Lists all devices detected by MST.  
+
+### 5. Check the link status of port 0  
 
 
 
