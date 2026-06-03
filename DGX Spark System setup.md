@@ -613,6 +613,61 @@ Mean: No errors detected.
 
 ### 6. Configure the CX7 NIC  
 
+![說明](images/image_16.png)
+
+code:  
+$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 --yes set FLEX_PARSER_PROFILE_ENABLE=4  
+Function: Enable the eCPRI packet parser on ConnectX-7.  
+
+(1): mlxconfig : Mellanox firmware configuration tool.  
+(2): /dev/mst/mt4129_pciconf0 : Specify ConnectX-7 Port 0.  
+(3): set : Modify a configuration parameter.  
+(4): FLEX_PARSER_PROFILE_ENABLE : Select which packet parsing profile the NIC should use.  
+(5): =4 : Profile 4, which corresponds to the eCPRI parser.  
+
+$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 --yes set PROG_PARSE_GRAPH=1  
+Function: Allow ConnectX-7 to use the Programmable Parser for parsing custom protocols.  
+
+(1): PROG_PARSE_GRAPH : Enable the programmable packet parsing pipeline.  
+
+$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 --yes set REAL_TIME_CLOCK_ENABLE=1  
+Function: Enable the ConnectX-7 hardware real-time clock.  
+$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 --yes set ACCURATE_TX_SCHEDULER=1  
+Function: Enable hardware-level packet transmission scheduling.  
+$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 --yes set CQE_COMPRESSION=1  
+Function: Reduce the CPU overhead required to process the Completion Queue.  
+
+(1): CQE_COMPRESSION : Completion Queue Entry compression.  
+Compresses 100 CQEs into a smaller number of CQEs, reducing CPU interrupts and CPU load.  
+
+$ sudo mlxfwreset -d /dev/mst/mt4129_pciconf0 --yes --level 3 r  
+Function: Restart the ConnectX-7 adapter.  
+
+(1): mlxfwreset : Mellanox Firmware Reset Tool.  
+(2): --level 3 : Full reset.  
+(3): r : Reset.  
+
+$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 q | grep   "CQE_COMPRESSION|PROG_PARSE_GRAPH|FLEX_PARSER_PROFILE_ENABLE|REAL_TIME_CLOCK_ENABLE|ACCURATE_TX_SCHEDULER"  
+Function: Query the current firmware settings.  
+
+(1): q : Query. Its purpose is to display all configuration values.  
+(2): grep : Filter and display only the specified firmware setting names."CQE_COMPRESSION\|PROG_PARSE_GRAPH\|FLEX_PARSER_PROFILE_ENABLE\|REAL_TIME_CLOCK_ENABLE\|ACCURATE_TX_SCHEDULER" :  
+Display only the following firmware settings:  
+FLEX_PARSER_PROFILE_ENABLE  
+PROG_PARSE_GRAPH  
+REAL_TIME_CLOCK_ENABLE  
+ACCURATE_TX_SCHEDULER  
+CQE_COMPRESSION  
+
+Output:  
+FLEX_PARSER_PROFILE_ENABLE                  4  
+PROG_PARSE_GRAPH                            True(1)  
+ACCURATE_TX_SCHEDULER                       True(1)  
+CQE_COMPRESSION                             AGGRESSIVE(1)  
+REAL_TIME_CLOCK_ENABLE                      True(1)  
+
+Mean: According to the command output, the displayed configuration values show that the eCPRI Parser is enabled, the Programmable Parser is enabled, the NIC Hardware Clock is enabled, the Accurate TX Scheduler is enabled, and the maximum CQE compression mode is enabled.  
+
 
 
 
