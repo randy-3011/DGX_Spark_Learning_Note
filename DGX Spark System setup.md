@@ -673,7 +673,7 @@ Mean: According to the command output, the displayed configuration values show t
 
 ## 1. Unload the current driver modules and uninstall the old driver  
 
-![說明](images/image_16.png)
+![說明](images/image_17.png)
 
 code:  
 $ for m in $(lsmod | awk "/^[^[:space:]]*(nvidia|nv_|gdrdrv)/ {print \$1}"); do echo Unload $m...; sudo rmmod $m; done  
@@ -690,11 +690,43 @@ Function: Remove the driver if it was installed by runfile installer before.
 
 ## 2. Install the NVIDIA open-source GPU kernel driver (OpenRM)
 
+![說明](images/image_18.png)
 
+code:  
+$ wget https://developer.download.nvidia.com/compute/cuda/13.1.1/local_installers/cuda_13.1.1_590.48.01_linux_sbsa.run  
+Function: Download the CUDA 13.1.1 offline installer package from the NVIDIA website.  
 
+(1): wget : File download utility.  
 
+$ sudo sh cuda_13.1.1_590.48.01_linux_sbsa.run --extract=/tmp/cuda_extract  
+Function: Extract the CUDA installation package.  
 
+(1): sh : Execute a shell script.  
+(2): --extract=/tmp/cuda_extract : Extract the package to /tmp/cuda_extract.  
 
+$ sudo sh /tmp/cuda_extract/NVIDIA-Linux-aarch64-590.48.01.run --silent -m kernel-open  
+Function: Install the NVIDIA GPU Driver 590.48.01.  
 
+(1): aarch64 : ARM64   
+(2): --silent : Perform a silent installation without displaying interactive menus.  
+(3): -m kernel-open : Use the Open GPU Kernel Module.  
 
+$ nvidia-smi  
+Function: Verify that the driver is loaded successfully  
+
+Output:
+
+Mean:
+Driver 590.48.01 installed successfully.  
+CUDA 13.1 is functioning correctly.  
+The Blackwell GPU (GB10) has been detected successfully.  
+The GPU is currently in an idle state.  
+The system is ready to run CUDA, Aerial, or AI workloads.  
+
+(1): The first line shows that the driver version is correct.  
+(2): Persistence-M is On : Persistence Mode is enabled.  
+Purpose: Keep the NVIDIA driver loaded and resident in memory.  
+(3): Perf is P8 : Indicates that the Performance State is currently in the idle/low-power state.  
+
+---
 
