@@ -788,8 +788,65 @@ Function: Install the compiled programs into the Linux system.
 
 ![說明](images/image_22.png)
 
+code:  
+$ cat <<EOF | sudo tee /etc/ptp.conf  
+...  
+network_transport L2  
+EOF  
+Function: Create the /etc/ptp.conf configuration file.  
 
+(1): cat <<EOF : Output all following text until EOF is encountered.  
+(2): sudo tee /etc/ptp.conf : Write the output content into /etc/ptp.conf.  
+Global Section  
+(3): dataset_comparison G.8275.x : Specify the ITU-T G.8275.x telecom-grade PTP profile.  
+(4): G.8275.defaultDS.localPriority 128 : PTP master election priority. A smaller value means higher priority. 128 is a neutral setting.  
+(5): maxStepsRemoved 255 : Allow up to 255 PTP hops.  
+(6): logAnnounceInterval -3 : Announce message interval. 2^(-3) = 1/8 second. The master sends an Announce message every 125 ms.  
+(7): logSyncInterval -4 : Sync message interval. 2^(-4) = 1/16 second. A Sync message is sent every 62.5 ms.  
+(8): logMinDelayReqInterval -4 : Delay Request interval. A Delay Request message is sent every 62.5 ms.  
+(9): G.8275.portDS.localPriority 128 : Port election priority.  
+(10): network_transport L2 : Use Ethernet Layer 2 transport for PTP messages.  
+(11): domainNumber 24 : PTP domain number. Only devices in Domain 24 will synchronize with each other.  
+(12): tx_timestamp_timeout 30 : Hardware timestamp timeout, up to 30 ms.  
+(13): clientOnly 1 : Operate only as a PTP slave.  
+(14): clock_servo pi : Use a PI controller for clock correction.  
+(15): step_threshold 1.0 : If the clock error exceeds 1 second, step the clock immediately; otherwise, adjust it gradually.  
+(16): egressLatency 28 : Compensate for packet transmission latency. Unit: nanoseconds (ns).  
+(17): pi_proportional_const 4.65 : Proportional (P) gain. Provides immediate correction. 4.65 is the recommended intermediate value from NVIDIA.  
+(18): pi_integral_const 0.1 : Integral (I) gain. Corrects long-term clock drift.  
+aerial100 Section  
+(19): announceReceiptTimeout 3 : If three consecutive Announce messages are missed, the master is considered unavailable.  
+(20): delay_mechanism E2E : End-to-End delay measurement mechanism used by PTP.  
+(21): network_transport L2 : Specify that PTP packets are transmitted over Layer 2 Ethernet.  
 
+$ cat <<EOF | sudo tee /etc/systemd/system/ptp4l.service  
+...  
+WantedBy=multi-user.target  
+EOF  
+Function: Create a systemd service.
+
+Unit Section  
+(1): Description=Precision Time Protocol (PTP) service : Assign a name and description to this service.This is the time synchronization service.  
+(2): Documentation=man:ptp4l : Specify where the service documentation can be found.   
+(3): After=network.target nvidia.service : Start ptp4l only after the network and NVIDIA driver services have been started.  
+Service Section
+(4): Restart=always : Automatically restart ptp4l if it crashes or exits unexpectedly.  
+(5): RestartSec=5s : Wait 5 seconds before restarting the service.  
+(6): Type=simple : Tell systemd that this program runs continuously in the foreground after startup.  
+(7): ExecStart=/usr/sbin/ptp4l -f /etc/ptp.conf : Specify the actual command to execute when the service starts.  
+Install Section  
+(8): WantedBy=multi-user.target : Define at which boot stage the service should be automatically started.  
+
+$ sudo systemctl daemon-reload  
+Function: Reload all systemd service configuration files.  
+$ sudo systemctl restart ptp4l.service  
+Function: Start (or restart) the ptp4l service immediately.  
+$ sudo systemctl enable ptp4l.service  
+Function: Enable the ptp4l service to start automatically at boot time.  
+
+### 3.  Turn off NTP  
+
+![說明](images/image_23.png)
 
 
 
