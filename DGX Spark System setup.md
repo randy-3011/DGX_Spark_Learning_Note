@@ -671,7 +671,7 @@ Mean: According to the command output, the displayed configuration values show t
 ---
 ## 11. Install CUDA Driver  
 
-## 1. Unload the current driver modules and uninstall the old driver  
+### 1. Unload the current driver modules and uninstall the old driver  
 
 ![說明](images/image_17.png)
 
@@ -688,7 +688,7 @@ Function: Remove the driver if it was installed by runfile installer before.
 (4): echo : Display messages such as Unload nvidia... or Unload nvidia_uvm... to make it easier to monitor the progress.  
 (5): rmmod : Remove Module. Unload a module from the Linux kernel.  
 
-## 2. Install the NVIDIA open-source GPU kernel driver (OpenRM)
+### 2. Install the NVIDIA open-source GPU kernel driver (OpenRM)
 
 ![說明](images/image_18.png)
 
@@ -729,4 +729,35 @@ Purpose: Keep the NVIDIA driver loaded and resident in memory.
 (3): Perf is P8 : Indicates that the Performance State is currently in the idle/low-power state.  
 
 ---
+## 12. Install Docker and Nvidia Container Toolkit  
+
+![說明](images/image_19.png)
+
+code:  
+$ docker --version  
+Function: Check the Docker version and verify that Docker is functioning properly.  
+
+$ nvidia-ctk --version  
+Function: Check the NVIDIA Container Toolkit version.  
+
+NOTE:  
+If the Nvidia container toolkit version is older than 1.17.4, run the following commands to upgrade to the current version:  
+
+![說明](images/image_20.png)
+
+Mean: Update package information to the latest version and install the NVIDIA Container Toolkit.  
+
+---
+## 13. Install ptp4l and phc2sys  
+
+### 1. Linuxptp 4.2 is used
+
+![說明](images/image_21.png)
+
+code:
+
+
+
+
+
 
