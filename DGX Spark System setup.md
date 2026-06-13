@@ -750,11 +750,46 @@ Mean: Update package information to the latest version and install the NVIDIA Co
 ---
 ## 13. Install ptp4l and phc2sys  
 
-### 1. Linuxptp 4.2 is used
+### 1. Linuxptp 4.2 is used  
+
+Purpose: Support dual port PTP  
 
 ![說明](images/image_21.png)
 
 code:
+$ sudo apt remove linuxptp  
+Function: Remove the linuxptp package installed from the Ubuntu repository.  
+
+$ wget https://github.com/richardcochran/linuxptp/archive/refs/tags/v4.2.tar.gz  
+Function: Download the LinuxPTP 4.2 source code for time synchronization.  
+
+$ tar -xzf v4.2.tar.gz  
+Function: Extract v4.2.tar.gz.  
+
+(1): tar : Linux archive utility.  
+(2): -x : Extract files.  
+(3): -z : Handle gzip-compressed archives.  
+(4): -f : Specify the archive file.  
+
+$ cd linuxptp-4.2/  
+Function: Change to the LinuxPTP source code directory.  
+
+$ make  
+Function: Compile the source code, converting the C source files into executable programs.  
+
+$ sudo make install prefix=/usr sbindir=/usr/sbin  
+Function: Install the compiled programs into the Linux system.  
+
+(1): make install : Execute the installation process.  
+(2): prefix=/usr : Specify /usr as the installation directory for the program files.  
+(3): sbindir=/usr/sbin : Specify /usr/sbin as the installation directory for system administration utilities.  
+
+### 2. Configure PTP4L
+
+![說明](images/image_22.png)
+
+
+
 
 
 
