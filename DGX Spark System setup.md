@@ -848,6 +848,33 @@ Function: Enable the ptp4l service to start automatically at boot time.
 
 ![說明](images/image_23.png)
 
+code:  
+$ sudo timedatectl set-ntp false  
+Function: Disable Linux NTP time synchronization.  
+
+(1): timedatectl : Linux time management utility used to manage system time, time zones, RTC, and NTP.  
+(2): set-ntp : Configure the NTP status.  
+
+$ timedatectl  
+Function: Display the current time synchronization status.  
+
+Output:  
+Mean: These three lines are the main indicators to verify the result.  
+
+(1): System clock synchronized: no  
+Mean: The system clock is not currently synchronized with any external time source.  
+(2): NTP service: inactive  
+Mean: The NTP service is disabled.  
+(3): RTC in local TZ: no  
+Mean: The RTC (Real-Time Clock) uses UTC. 
+UTC = Coordinated Universal Time, the global standard time reference.  
+
+
+
+
+
+
+
 
 
 
