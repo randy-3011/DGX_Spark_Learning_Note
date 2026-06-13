@@ -668,6 +668,30 @@ REAL_TIME_CLOCK_ENABLE                      True(1)
 
 Mean: According to the command output, the displayed configuration values show that the eCPRI Parser is enabled, the Programmable Parser is enabled, the NIC Hardware Clock is enabled, the Accurate TX Scheduler is enabled, and the maximum CQE compression mode is enabled.  
 
+---
+## 11. Install CUDA Driver  
+
+## 1. Unload the current driver modules and uninstall the old driver  
+
+![說明](images/image_16.png)
+
+code:  
+$ for m in $(lsmod | awk "/^[^[:space:]]*(nvidia|nv_|gdrdrv)/ {print \$1}"); do echo Unload $m...; sudo rmmod $m; done  
+Funtion: Unload the current driver modules.  
+
+$ sudo /usr/bin/nvidia-uninstall  
+Function: Remove the driver if it was installed by runfile installer before.  
+
+(1): lsmod : List all currently loaded kernel modules.  
+(2): awk "/^[^[:space:]]*(nvidia|nv_|gdrdrv)/ {print $1}" : Display only modules whose names start with nvidia, nv_, or gdrdrv.  
+(3): $(...) : Command substitution. Convert the query results into a list that can be used by the outer command.  
+(4): echo : Display messages such as Unload nvidia... or Unload nvidia_uvm... to make it easier to monitor the progress.  
+(5): rmmod : Remove Module. Unload a module from the Linux kernel.  
+
+## 2. Install the NVIDIA open-source GPU kernel driver (OpenRM)
+
+
+
 
 
 
