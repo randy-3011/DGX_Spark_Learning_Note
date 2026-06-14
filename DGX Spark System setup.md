@@ -1033,7 +1033,7 @@ Function: Create /usr/local/bin/nvidia.sh.
 
 (1): #!/bin/bash : Tell Linux to execute this script using Bash.  
 (2): mst start : Start MST (Mellanox Software Tools).  
-(3):
+(3):  
 ExecStartPre=ifconfig aerial0* up  
 ExecStartPre=ethtool --set-priv-flags aerial0* tx_port_ts on  
 ExecStartPre=ethtool -A aerial00 rx off tx off  
@@ -1053,14 +1053,126 @@ Pin RCU threads to CPU Core 1. -c 1 means binding them to Core 1.
 (10): modprobe nvidia-peermem :  
 Enable DPDK mapping of GPU memory to support GPU mbuf chaining.  
 
+### 4. Create the rcu_affinity_manager.sh script
 
+![說明](images/image_30.png)
 
+$ wget raw.githubusercontent.com/NVIDIA/aerial-cuda-accelerated-ran/refs/heads/main/cubb_scripts/infra/rcu_affinity_manager.sh 
+Function: Download the rcu_affinity_manager.sh script from the official NVIDIA Aerial GitHub repository. This script is used to manage CPU affinity for Linux RCU threads. 
+$ sudo cp rcu_affinity_manager.sh /usr/local/bin/rcu_affinity_manager.sh  
+Function: Copy the script to /usr/local/bin/.  
 
+(1): cp : Copy a file.  
 
+$ sudo chmod +x /usr/local/bin/rcu_affinity_manager.sh  
+Function: Add execute permission to the script.  
 
+(2): chmod : Change Mode (modify file permissions).  
+(3): +x : Add execute permission.  
 
+### 5. Create a system service file to be loaded after network interfaces are up
 
+![說明](images/image_31.png)
 
+code:
+$ cat <<EOF | sudo tee /etc/systemd/system/nvidia.service  
+...  
+EOF  
+Function: Create /etc/systemd/system/nvidia.service.  
 
+[Unit]  
+After=network.target :  
+Start nvidia.service only after the network has been initialized.  
 
+[Service]  
+ExecStart=/usr/local/bin/nvidia.sh :  
+Instruct systemd to execute this script when the service starts.   
+
+[Install]  
+WantedBy=default.target :  
+Create a symbolic link under /etc/systemd/system/default.target.wants/ so that the service is started automatically when the system reaches the default target.  
+
+### 6. Create a system service file for nvidia-persistenced to be run at startup.
+
+![說明](images/image_32.png)
+
+code:  
+$ cat <<EOF | sudo tee /etc/systemd/system/nvidia-persistenced.service  
+...  
+EOF  
+Function: Create /etc/systemd/system/nvidia-persistenced.service  
+
+[Unit]  
+Description=NVIDIA Persistence Daemon : Assign a descriptive name to the service.  
+Wants=syslog.target : Indicate that the service prefers syslog to be started first.   
+
+[Service]  
+Type=forking :  
+Tell systemd that the program will fork itself and continue running in the background.  
+ExecStart=/usr/bin/nvidia-persistenced : Execute /usr/bin/nvidia-persistenced.  
+ExecStopPost=/bin/rm -rf /var/run/nvidia-persistenced :  
+Remove the temporary runtime directory after the service has stopped.  
+
+[Install]  
+WantedBy=multi-user.target : Start the service automatically at boot.  
+
+### 7. Set the file permissions, reload the systemd daemon, enable the service. (Restart the service when installing the first time, and check status.)
+
+![說明](images/image_33.png)
+
+code:  
+$ sudo chmod 744 /usr/local/bin/nvidia.sh  
+Function: Configure execution permissions for nvidia.sh.  
+
+(1):  
+7 = rwx → Owner permissions: read, write, and execute.  
+4 = r-- → Group permissions: read only.  
+4 = r-- → Others permissions: read only.  
+
+$ sudo chmod 664 /etc/systemd/system/nvidia.service  
+Function: Set permissions for nvidia.service.  
+$ sudo chmod 664 /etc/systemd/system/nvidia-persistenced.service  
+Function: Set permissions for nvidia-persistenced.service.  
+$ sudo systemctl daemon-reload   
+Function: Reload systemd service definitions.  
+$ sudo systemctl enable nvidia-persistenced.service  
+Function: Enable NVIDIA Persistence Daemon at boot.  
+$ sudo systemctl enable nvidia.service  
+Function: Enable nvidia.sh at boot.  
+$ sudo systemctl restart nvidia.service  
+Function: Execute nvidia.sh immediately.  
+$ sudo systemctl restart nvidia-persistenced.service  
+Function: Start the NVIDIA Persistence Daemon.  
+$ sudo systemctl status nvidia.service  
+Function: Check the status of nvidia.service.  
+$ sudo systemctl status nvidia-persistenced.service  
+Function: Check the status of the NVIDIA Persistence Daemon.  
+
+### 8. The output of the last command  
+
+![說明](images/image_34.png)
+
+code:
+[nvidia.service Status Analysis]  
+Active: inactive (dead)  
+Mean: The script has finished executing.  
+
+status=0/SUCCESS  
+Deactivated successfully  
+Mean: The script completed successfully and exited normally.  
+
+RCU Statistics  
+Mean: RCU threads are not running on CPU cores 4–19.  
+
+[nvidia-persistenced.service Status Analysis]  
+Active: active (running)  
+Mean: The service is currently running in the background.  
+
+device 000f:01:00.0 - persistence mode enabled  
+Mean: GPU Persistence Mode has been enabled successfully.  
+
+---
+## 15. Validating software-component versions and system configurations  
+
+Before running Aerial, make sure that your software-component versions and system configurations meet the required specifications. For more information, refer to the System Configuration Validation Script.  
 
