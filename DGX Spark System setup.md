@@ -1,21 +1,53 @@
 ## Table of Contents:  
-### 1.Cable Connection  
-(1):Host OS Internet Connection  
-(2):E2E Test Connection  
-### 2.Disable Secure Boot  
-### 3.DGX Spark First-Time Setup  
-### 4.Configure the Network Interfaces  
-### 5.Disable Auto Upgrade  
-### 6.Install NVIDIA Optimized Ubuntu Kernel  
-### 7.Configure Linux Kernel Command-line  
-### 8.Apply the Changes and Reboot to Load the Kernel  
-### 9.Install Dependency Packages  
-### 10.Install DOCA OFED and Mellanox Firmware Tools on the Host  
-### 11.Install CUDA Driver  
-### 12.Install Docker and Nvidia Container Toolkit  
-### 13.Install ptp4l and phc2sys  
-### 14.Setup the Boot Configuration Service  
-### 15.Validating software-component versions and system configurations  
+### 1. Cable Connection  
+1. Host OS Internet Connection  
+2.  E2E Test Connection  
+### 2. Disable Secure Boot  
+### 3. DGX Spark First-Time Setup  
+1. GPU  
+2. NIC  
+### 4. Configure the Network Interfaces  
+1. Run to check for network devices and look for the entries.  
+2. Create files at /etc/systemd/network/ with the desired name for the interface and the MAC address found in the previous step.  
+3. Apply the change  
+### 5. Disable Auto Upgrade  
+### 6. Install NVIDIA Optimized Ubuntu Kernel  
+1. Install the NVIDIA optimized Ubuntu kernel  
+2. Update grub to change the default boot kernel  
+### 7. Configure Linux Kernel Command-line  
+### 8. Apply the Changes and Reboot to Load the Kernel   
+1. Regenerate the boot configuration to apply the new kernel parameters
+2. Verify that the kernel command-line parameters are configured properly
+3. Check if hugepages are enabled  
+### 9. Install Dependency Packages  
+### 10. Install DOCA OFED and Mellanox Firmware Tools on the Host  
+1. Check if there is an existing MOFED installed on the host system
+2. Uninstall Existing MOFED Installation
+3. Install DOCA OFED
+4. Verify installation
+5. Check the link status of port 0
+6. Configure the CX7 NIC  
+### 11. Install CUDA Driver  
+1. Unload the current driver modules and uninstall the old driver
+2. Install the NVIDIA open-source GPU kernel driver (OpenRM)
+### 12. Install Docker and Nvidia Container Toolkit  
+### 13. Install ptp4l and phc2sys  
+1. Linuxptp 4.2 is used
+2. Configure PTP4L
+3. Turn off NTP
+4. Run PHC2SYS as service
+5. Reload the modified systemd service files and apply the new configuration
+6. Verify that the system clock is synchronized
+### 14. Setup the Boot Configuration Service  
+1. Create cpu-dma-latency service on DGX Spark
+2. Set the file permissions, reload the systemd daemon, enable the service, restart the service and check status
+3. Create the directory and create the file to run the commands with every reboot
+4. Create the rcu_affinity_manager.sh script
+5. Create a system service file to be loaded after network interfaces are up
+6. Create a system service file for nvidia-persistenced to be run at startup
+7. Set the file permissions, reload the systemd daemon, enable the service. (Restart the service when installing the first time, and check status.)
+8. The output of the last command  
+### 15. Validating software-component versions and system configurations  
 
 ---
 ## 1. Cable Connection  
