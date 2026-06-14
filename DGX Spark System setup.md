@@ -869,6 +869,96 @@ Mean: The NTP service is disabled.
 Mean: The RTC (Real-Time Clock) uses UTC. 
 UTC = Coordinated Universal Time, the global standard time reference.  
 
+### 4.  Run PHC2SYS as service
+
+Function: PHC2SYS is used to synchronize the system clock to the PTP hardware clock (PHC) on the NIC.  
+
+![說明](images/image_24.png)
+
+code:  
+$ cat <<EOF | sudo tee /etc/systemd/system/phc2sys.service  
+Function: Create the /etc/systemd/system/phc2sys.service file.  
+
+[Unit]  
+(1): Description=Synchronize system clock or PTP hardware clock (PHC) :  
+Assign a name and description to the service.  
+(2): Documentation=man:phc2sys :  
+Specify the documentation location. The manual can be viewed with man phc2sys.  
+(3): Requires=ptp4l.service :  
+Indicates that phc2sys depends on ptp4l. If ptp4l is not running, phc2sys will not start.  
+(4): After=ptp4l.service :  
+Start ptp4l first, then start phc2sys.  
+
+[Service]  
+(5): Restart=always :  
+Automatically restart phc2sys if it crashes or exits unexpectedly.  
+(6): RestartSec=5s :  
+Wait 5 seconds before restarting the service.  
+(7): Type=simple :  
+phc2sys runs continuously in the foreground.  
+(8): ExecStartPre=sleep 2 :
+Wait 2 seconds before starting phc2sys.  
+This gives ptp4l time to stabilize before synchronization begins.  
+(9): ExecStart=/bin/sh -c "/usr/sbin/phc2sys -s aerial00 -c CLOCK_REALTIME -n 24 -O 0 -R 256 -u 256" :  
+Synchronize the ConnectX-7 Hardware Clock (PHC) to the Linux System Clock.  
+-s aerial00 : source clock, using the PTP interface aerial00.  
+-c CLOCK_REALTIME : target clock, the Linux system time (CLOCK_REALTIME).  
+-n 24 : PTP Domain 24.  
+-O 0 : Time offset compensation value. No additional compensation is applied.  
+-R 256 : Update rate. The clock is adjusted 256 times per second, which is approximately once every 3.9 ms.  
+-u 256 : Statistics reporting interval. Output synchronization statistics once every 256 updates.  
+
+Note:  
+PTP is based on TAI time and the system clock is synchronized to TAI time scale with the above PHC2SYS settings. The current offset between UTC and TAI is 37 seconds (leap seconds) and TAI is ahead of UTC by this amount. If there is a need to change the system clock to UTC time on DU, the first ExecStart with should be commented out and the second ExecStart with should be uncommented assuming the PTP and GrandMaster are properly configured.  
+
+Difference: -O 0 → -w
+
+-w : Wait mode.  
+Automatically obtains and follows the UTC offset, leap second information, and TAI (International Atomic Time) data from ptp4l.  
+
+[Install]  
+(10): WantedBy=multi-user.target :  
+Start the service automatically during system boot when the system reaches the multi-user operating mode.  
+
+### 5. Reload the modified systemd service files and apply the new configuration.  
+
+![說明](images/image_25.png)
+
+code:  
+$ sudo systemctl daemon-reload  
+Function: Instruct the system to reload the modified service files.  
+$ sudo systemctl restart phc2sys.service  
+Function: Start (or restart) phc2sys.service immediately.  
+
+(1): restart :  
+If the service is not running → start it.  
+If the service is already running → stop it first, then start it again.  
+
+$ sudo systemctl enable phc2sys.service  
+Function: Configure phc2sys to start automatically at boot.  
+
+(1): enable :  
+Does not start the service immediately; it only creates the boot-time startup configuration.  
+
+### 6. Verify that the system clock is synchronized  
+
+![說明](images/image_26.png)
+
+Output:  
+(1):  
+Local time: Thu 2026-03-19 05:40:21 UTC  
+Universal time: Thu 2026-03-19 05:40:21 UTC  
+Mean: Local time and Universal time are identical, indicating that the system is using UTC as its standard time zone.  
+(2):  
+System clock synchronized: yes  
+NTP service: inactive  
+Mean: NTP is disabled, and PTP has successfully taken over time synchronization. The Linux system clock is now synchronized through PTP.  
+
+---
+## 14. Setup the Boot Configuration Service
+
+### 1. Create cpu-dma-latency service on DGX Spark
+
 
 
 
