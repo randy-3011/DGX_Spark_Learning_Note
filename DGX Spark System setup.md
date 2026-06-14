@@ -959,6 +959,74 @@ Mean: NTP is disabled, and PTP has successfully taken over time synchronization.
 
 ### 1. Create cpu-dma-latency service on DGX Spark
 
+![說明](images/image_27.png)
+
+code:  
+cat <<EOF | sudo tee /etc/systemd/system/cpu-latency.service  
+...  
+EOF  
+Function: Create the /etc/systemd/system/cpu-latency.service file.  
+
+[Unit]  
+(1): Description=Disable CPU DMA Latency :  
+Disable CPU DMA latency restrictions and keep the CPU in a low-latency operating state.  
+(2): After=network.target :  
+Start this service after the network has been initialized.  
+
+[Service]  
+(3): ExecStart=/bin/bash -c "exec 3> /dev/cpu_dma_latency; echo 0 >&3; exec /usr/bin/sleep infinity"  
+exec 3> /dev/cpu_dma_latency : Inform the kernel of the maximum latency that can be tolerated.  
+exec 3> : Create File Descriptor 3 and connect it to /dev/cpu_dma_latency.  
+echo 0 >&3 : Write 0 to /dev/cpu_dma_latency.  
+Maximum allowed latency = 0 microseconds, which prevents the CPU from entering deep sleep states.  
+exec /usr/bin/sleep infinity : Keep the file descriptor open indefinitely so the latency requirement remains active.  
+(4): Restart=always :  
+If the service terminates unexpectedly, systemd automatically restarts it to ensure that low-latency CPU mode remains enabled.  
+
+[Install]  
+(5): WantedBy=multi-user.target :  
+Start the service automatically at boot.  
+
+### 2. Set the file permissions, reload the systemd daemon, enable the service, restart the service and check status  
+
+![說明](images/image_28.png)
+
+code:  
+$ sudo chmod 664 /etc/systemd/system/cpu-latency.service  
+Function: Change the file permissions of cpu-latency.service.  
+
+(1): chmod : Change Mode (modify file permissions).  
+(2): 664 :  
+6 = rw- → Owner permissions: read and write.  
+6 = rw- → Group permissions: read and write.  
+4 = r-- → Others permissions: read-only.  
+
+$ sudo systemctl daemon-reload  
+Function: Notify systemd to reload the newly added service definition.  
+$ sudo systemctl restart cpu-latency.service  
+Function: Immediately execute the command specified in ExecStart=.  
+$ sudo systemctl enable cpu-latency.service  
+Function: Create a symbolic link in multi-user.target.wants.  
+This ensures that cpu-latency.service starts automatically at every system boot.  
+$ sudo systemctl status cpu-latency.service  
+Function: Check the service status and verify that it is running successfully  
+
+Output:  
+Loaded: loaded  
+Mean: systemd successfully loaded the service file.  
+Active: active  
+Mean: The service is currently running.  
+Main PID: 5778 (sleep)  
+Mean: The main process is sleep, which is expected and indicates normal operation.  
+Started cpu-latency.service - Disable CPU DMA Latency.  
+Mean: The service started successfully.  
+
+
+
+
+
+
+
 
 
 
