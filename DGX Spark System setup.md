@@ -962,7 +962,7 @@ Mean: NTP is disabled, and PTP has successfully taken over time synchronization.
 ![說明](images/image_27.png)
 
 code:  
-cat <<EOF | sudo tee /etc/systemd/system/cpu-latency.service  
+$ cat <<EOF | sudo tee /etc/systemd/system/cpu-latency.service  
 ...  
 EOF  
 Function: Create the /etc/systemd/system/cpu-latency.service file.  
@@ -1021,11 +1021,37 @@ Mean: The main process is sleep, which is expected and indicates normal operatio
 Started cpu-latency.service - Disable CPU DMA Latency.  
 Mean: The service started successfully.  
 
+### 3. Create the directory and create the file to run the commands with every reboot
 
+![說明](images/image_29.png)
 
+code:
+$ cat <<"EOF" | sudo tee /usr/local/bin/nvidia.sh  
+...  
+EOF  
+Function: Create /usr/local/bin/nvidia.sh.  
 
-
-
+(1): #!/bin/bash : Tell Linux to execute this script using Bash.  
+(2): mst start : Start MST (Mellanox Software Tools).  
+(3):
+ExecStartPre=ifconfig aerial0* up  
+ExecStartPre=ethtool --set-priv-flags aerial0* tx_port_ts on  
+ExecStartPre=ethtool -A aerial00 rx off tx off  
+Function:  
+Enable all aerial0* network interfaces.  
+Enable TX Hardware Timestamping.  
+Disable Ethernet Flow Control.  
+(4): rx off : Disable RX Pause Frames.  
+(5): tx off : Disable TX Pause Frames.  
+(6): nvidia-smi -lgc 2000 : Lock the GPU clock and force the GPU to run at maximum frequency.  
+(7): echo -1 > /proc/sys/kernel/sched_rt_runtime_us :  
+Allow real-time processes to use 100% CPU. -1 means unlimited.  
+(8): echo 0 | sudo tee /proc/sys/kernel/timer_migration :  
+Disable timer migration.  
+(9): /usr/local/bin/rcu_affinity_manager.sh -w -c 1 :  
+Pin RCU threads to CPU Core 1. -c 1 means binding them to Core 1.  
+(10): modprobe nvidia-peermem :  
+Enable DPDK mapping of GPU memory to support GPU mbuf chaining.  
 
 
 
