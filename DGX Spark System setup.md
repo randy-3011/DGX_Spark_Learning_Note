@@ -1,6 +1,6 @@
 ## Table of Contents:  
 - [Cable Connection](#1-cable-connection)
-  - [Host OS Internet Connection](#host-os-internet-connection)  
+  - [Host OS Internet Connection](#(1)-host-os-internet-connection)  
   - E2E Test Connection  
 ### 2. Disable Secure Boot  
 ### 3. DGX Spark First-Time Setup  
