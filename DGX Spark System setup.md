@@ -96,6 +96,7 @@ Output:
 ## 4. Configure the Network Interfaces (For the following steps)  
 
 Purpose : Ensure that you have the proper netplan config for your local network.  
+
 The network interface names could change after reboot  
 --> Create a persistent net link files under /etc/systemd/network, one for each interface.  
 Target : To ensure persistent network interface names after reboot  
