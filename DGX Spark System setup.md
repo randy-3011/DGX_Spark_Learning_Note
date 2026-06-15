@@ -1,5 +1,5 @@
 ## Table of Contents:  
-### 1. Cable Connection  
+[Cable Connection](#1-cable-connection)
 1. Host OS Internet Connection  
 2.  E2E Test Connection  
 ### 2. Disable Secure Boot  
