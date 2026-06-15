@@ -37,7 +37,7 @@
 
 ### (2). E2E(End to End) Test Connection  
 1. CX7 fronthaul port#0 or port#1 must be connected to the fronthaul switch.  
-2. Make sue the PTP is configured to use the port connected to the fronthaul switch.  
+2. Make sure the PTP is configured to use the port connected to the fronthaul switch.  
 
 ![說明](images/image_0.png)
 
