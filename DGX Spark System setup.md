@@ -1,28 +1,19 @@
 ## Table of Contents:  
 - [1. Cable Connection](#1-cable-connection)  
-  - [Host OS Internet Connection](#1-host-os-internet-connection)
-  - [E2E(End to End) Test Connection](#2-e2eend-to-end-test-connection)
 
 - [2. Disable Secure Boot](#2-disable-secure-boot)
 
 - [3. DGX Spark First-Time Setup](#3-dgx-spark-first-time-setup)  
-  - [GPU](#gpu)  
-  - [NIC](#nic)  
 
-- [4. Configure the Network Interfaces](#4-configure-the-network-interfaces)
+- [4. Configure the Network Interfaces](#4-configure-the-network-interfaces-for-the-following-steps)
 
 - [5. Disable Auto Upgrade](#5-disable-auto-upgrade)
 
 - [6. Install NVIDIA Optimized Ubuntu Kernel](#6-install-nvidia-optimized-ubuntu-kernel)
-  - [Install the NVIDIA Optimized Ubuntu kernel](#install-the-nvidia-optimized-ubuntu-kernel)
-  - [Update grub to change the default boot kernel](#update-grub-to-change-the-default-boot-kernel)
 
 - [7. Configure Linux Kernel Command-line](#7-configure-linux-kernel-command-line)
 
 - [8. Apply the Changes and Reboot to Load the Kernel](#8-apply-the-changes-and-reboot-to-load-the-kernel)
-  - [Regenerate the boot configuration](#regenerate-the-boot-configuration-to-apply-the-new-kernel-parameters)
-  - [Verify the kernel command-line](#verify-that-the-kernel-command-line-parameters-are-configured-properly)
-  - [Check if hugepages are enabled](#check-if-hugepages-are-enabled)
 
 - [9. Install Dependency Packages](#9-install-dependency-packages)
 
