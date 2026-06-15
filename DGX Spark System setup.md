@@ -1,7 +1,7 @@
 ## Table of Contents:  
 - [1. Cable Connection](#1-cable-connection)  
-  - [(1). Host OS Internet Connection](#1-host-os-internet-connection)
-  - [(2). E2E(End to End) Test Connection](#2-e2eend-to-end-test-connection)
+  - [Host OS Internet Connection](#1-host-os-internet-connection)
+  - [E2E(End to End) Test Connection](#2-e2eend-to-end-test-connection)
 
 - [2. Disable Secure Boot](#2-disable-secure-boot)
 
